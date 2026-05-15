@@ -974,13 +974,13 @@ v_\pi(s) \;=\; \mathbb{E}_\pi[R_{t+1} \mid S_t = s] \;+\; \gamma\, \mathbb{E}_\p
 <div class="columns">
 <div class="column" style="width:65%;">
 <p><span class="math display">\[
-\boxed{\;v_\pi(s) \;=\; \sum_a \pi(a \mid s) \sum_{s'} P(s' \mid s, a) \Bigl[\, R(s,a,s') + \gamma\, v_\pi(s') \,\Bigr]\;}
+\boxed{\;{\color{#2563eb}v_\pi(s)} \;=\; \sum_{\color{#f97316}a} {\color{#f97316}\pi(a \mid s)} \sum_{s'} P(s' \mid s, a) \Bigl[\, {\color{#dc2626}R(s,a,s')} + \gamma\, {\color{#2563eb}v_\pi(s')} \,\Bigr]\;}
 \]</span></p>
 <div class="fragment">
-<p><strong>Reading.</strong> Take an action under <span class="math inline">\(\pi\)</span> → observe <span class="math inline">\((r, s')\)</span> → receive <span class="math inline">\(r\)</span>, then the value of where you land — <strong>averaged over everything random</strong>.</p>
+<p><strong>Reading.</strong> Pick action under <span class="math inline">\(\color{#f97316}\pi\)</span> → observe <span class="math inline">\(\color{#dc2626}r\)</span> and next state <span class="math inline">\(s'\)</span> → value of <span class="math inline">\(s\)</span> is reward plus the discounted value at <span class="math inline">\(s'\)</span>, <strong>averaged over everything random</strong>.</p>
 </div>
 <div class="fragment">
-<p>A <strong>self-consistency</strong> equation: <span class="math inline">\(v_\pi\)</span> appears on both sides.</p>
+<p>A <strong>self-consistency</strong> equation: <span class="math inline">\(\color{#2563eb}v_\pi\)</span> appears on both sides.</p>
 </div>
 </div><div class="column" style="width:35%;">
 <p><img data-src="figures/backup_v.png" style="width:100.0%"></p>
@@ -1004,7 +1004,7 @@ v_\pi(s) \;=\; \mathbb{E}_\pi[R_{t+1} \mid S_t = s] \;+\; \gamma\, \mathbb{E}_\p
 <div class="columns">
 <div class="column" style="width:65%;">
 <p><span class="math display">\[
-\boxed{\;q_\pi(s, a) \;=\; \sum_{s'} P(s' \mid s, a) \Bigl[\, R(s,a,s') + \gamma\, \textstyle\sum_{a'} \pi(a' \mid s')\, q_\pi(s', a') \,\Bigr]\;}
+\boxed{\;{\color{#2563eb}q_\pi(s, a)} \;=\; \sum_{s'} P(s' \mid s, a) \Bigl[\, {\color{#dc2626}R(s,a,s')} + \gamma\, \textstyle\sum_{\color{#f97316}a'} {\color{#f97316}\pi(a' \mid s')}\, {\color{#2563eb}q_\pi(s', a')} \,\Bigr]\;}
 \]</span></p>
 <div class="fragment" title="THIS is the equation SARSA samples">
 <div class="callout callout-important callout-titled callout-style-default">
@@ -1016,7 +1016,7 @@ v_\pi(s) \;=\; \mathbb{E}_\pi[R_{t+1} \mid S_t = s] \;+\; \gamma\, \mathbb{E}_\p
 <p><strong>THIS is the equation SARSA samples</strong></p>
 </div>
 <div class="callout-content">
-<p>The inner structure <span class="math inline">\(r + \gamma\, q_\pi(s', a')\)</span> for the next <span class="math inline">\((s', a')\)</span> is <strong>exactly</strong> the <span class="math inline">\((S, A, R, S', A')\)</span> tuple SARSA collects.</p>
+<p>The inner structure <span class="math inline">\(\color{#dc2626}r + \gamma\, {\color{#2563eb}q_\pi(s', a')}\)</span> for the next <span class="math inline">\((s', a')\)</span> is <strong>exactly</strong> the <span class="math inline">\((S, {\color{#f97316}A}, {\color{#dc2626}R}, S', {\color{#f97316}A'})\)</span> tuple SARSA collects.</p>
 </div>
 </div>
 </div>
@@ -1452,15 +1452,15 @@ q_\pi(s,a) \;=\; \sum_{s'} P(s'|s,a) \Bigl[ R(s,a,s') + \gamma \sum_{a'} \pi(a'|
 <h2>The TD update for <span class="math inline">\(Q\)</span></h2>
 <p>Putting both ideas together:</p>
 <p><span class="math display">\[
-\boxed{\;Q(s, a) \;\leftarrow\; Q(s, a) \;+\; \alpha\, \Bigl[\, \underbrace{r + \gamma\, Q(s', a')}_{\text{TD target}} \;-\; \underbrace{Q(s, a)}_{\text{current estimate}}\, \Bigr]\;}
+\boxed{\;{\color{#2563eb}Q(s, a)} \;\leftarrow\; {\color{#2563eb}Q(s, a)} \;+\; \alpha\, \Bigl[\, \underbrace{{\color{#dc2626}r} + \gamma\, {\color{#2563eb}Q(s', a')}}_{\text{TD target}} \;-\; \underbrace{{\color{#2563eb}Q(s, a)}}_{\text{current estimate}}\, \Bigr]\;}
 \]</span></p>
 <div class="fragment">
 <p>The bracketed quantity is the <strong>TD error</strong>: <span class="math display">\[
-\delta \;=\; r + \gamma\, Q(s', a') \;-\; Q(s, a)
+\delta \;=\; \underbrace{{\color{#dc2626}r} + \gamma\, {\color{#2563eb}Q(s', a')}}_{\text{target}} \;-\; \underbrace{{\color{#2563eb}Q(s, a)}}_{\text{estimate}}
 \]</span></p>
 </div>
 <div class="fragment">
-<p><strong>Reading.</strong> Nudge the estimate <span class="math inline">\(Q(s, a)\)</span> a fraction <span class="math inline">\(\alpha\)</span> of the way toward what Bellman would say <em>if we trusted our current estimates and one observed transition</em>.</p>
+<p><strong>Reading.</strong> Nudge the estimate <span class="math inline">\(\color{#2563eb}Q(s, a)\)</span> a fraction <span class="math inline">\(\alpha\)</span> of the way toward what Bellman would say <em>if we trusted our current estimates and one observed transition</em>.</p>
 </div>
 <aside class="notes">
 <p>Walk through term by term. Highlight in colour: - (r + γ Q(s’, a’)) = TD target — Bellman’s RHS with estimates plugged in - Q(s, a) = current estimate - Difference = TD error δ - α = step size — how much we trust each observation At α = 1 we replace; at α = 0 we don’t learn. Robbins–Monro: shrink α.</p>
@@ -1667,7 +1667,7 @@ A_t \;=\;
 <h2>Why “SARSA”?</h2>
 <p>The five elements of the chain:</p>
 <p><span class="math display">\[
-\Bigl( \;\mathbf{S},\;\; \mathbf{A},\;\; \mathbf{R},\;\; \mathbf{S}',\;\; \mathbf{A}'\; \Bigr)
+\Bigl( \;{\color{#2563eb}\mathbf{S}},\;\; {\color{#f97316}\mathbf{A}},\;\; {\color{#dc2626}\mathbf{R}},\;\; {\color{#2563eb}\mathbf{S}'},\;\; {\color{#f97316}\mathbf{A}'}\; \Bigr)
 \]</span></p>
 <div class="fragment">
 <div class="callout callout-tip callout-titled callout-style-default">
@@ -1891,11 +1891,11 @@ Repeat (for each episode):
 <section id="teaser-q-learning-swaps-one-symbol" class="slide level2">
 <h2>Teaser: Q-learning swaps one symbol</h2>
 <p><strong>SARSA:</strong> <span class="math display">\[
-Q(S, A) \;\leftarrow\; Q(S, A) + \alpha \,\Bigl[\, R + \gamma\, \mathbf{Q(S', A')} - Q(S, A)\, \Bigr]
-\]</span> <em>Target uses the action <span class="math inline">\(A'\)</span> that the agent will actually take.</em></p>
+Q(S, A) \;\leftarrow\; Q(S, A) + \alpha \,\Bigl[\, R + \gamma\, {\color{#2563eb}\mathbf{Q(S', A')}} - Q(S, A)\, \Bigr]
+\]</span> <em>Target uses the action <span class="math inline">\(\color{#f97316}A'\)</span> that the agent will actually take.</em></p>
 <div class="fragment">
 <p><strong>Q-learning:</strong> <span class="math display">\[
-Q(S, A) \;\leftarrow\; Q(S, A) + \alpha \,\Bigl[\, R + \gamma\, \mathbf{\max_{a'} Q(S', a')} - Q(S, A)\, \Bigr]
+Q(S, A) \;\leftarrow\; Q(S, A) + \alpha \,\Bigl[\, R + \gamma\, {\color{#dc2626}\mathbf{\max_{a'} Q(S', a')}} - Q(S, A)\, \Bigr]
 \]</span> <em>Target uses the <strong>best</strong> possible next action — regardless of what the agent will do.</em></p>
 </div>
 <div class="fragment">

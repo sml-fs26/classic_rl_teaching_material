@@ -570,15 +570,15 @@ in a derivation.
 :::: {.columns}
 ::: {.column width="65%"}
 $$
-\boxed{\;v_\pi(s) \;=\; \sum_a \pi(a \mid s) \sum_{s'} P(s' \mid s, a) \Bigl[\, R(s,a,s') + \gamma\, v_\pi(s') \,\Bigr]\;}
+\boxed{\;{\color{#2563eb}v_\pi(s)} \;=\; \sum_{\color{#f97316}a} {\color{#f97316}\pi(a \mid s)} \sum_{s'} P(s' \mid s, a) \Bigl[\, {\color{#dc2626}R(s,a,s')} + \gamma\, {\color{#2563eb}v_\pi(s')} \,\Bigr]\;}
 $$
 
 ::: {.fragment}
-**Reading.** Take an action under $\pi$ → observe $(r, s')$ → receive $r$, then the value of where you land — **averaged over everything random**.
+**Reading.** Pick action under $\color{#f97316}\pi$ → observe $\color{#dc2626}r$ and next state $s'$ → value of $s$ is reward plus the discounted value at $s'$, **averaged over everything random**.
 :::
 
 ::: {.fragment}
-A **self-consistency** equation: $v_\pi$ appears on both sides.
+A **self-consistency** equation: $\color{#2563eb}v_\pi$ appears on both sides.
 :::
 :::
 
@@ -601,11 +601,11 @@ constraint that v_π must satisfy.
 :::: {.columns}
 ::: {.column width="65%"}
 $$
-\boxed{\;q_\pi(s, a) \;=\; \sum_{s'} P(s' \mid s, a) \Bigl[\, R(s,a,s') + \gamma\, \textstyle\sum_{a'} \pi(a' \mid s')\, q_\pi(s', a') \,\Bigr]\;}
+\boxed{\;{\color{#2563eb}q_\pi(s, a)} \;=\; \sum_{s'} P(s' \mid s, a) \Bigl[\, {\color{#dc2626}R(s,a,s')} + \gamma\, \textstyle\sum_{\color{#f97316}a'} {\color{#f97316}\pi(a' \mid s')}\, {\color{#2563eb}q_\pi(s', a')} \,\Bigr]\;}
 $$
 
 ::: {.fragment .callout-important title="THIS is the equation SARSA samples"}
-The inner structure $r + \gamma\, q_\pi(s', a')$ for the next $(s', a')$ is **exactly** the $(S, A, R, S', A')$ tuple SARSA collects.
+The inner structure $\color{#dc2626}r + \gamma\, {\color{#2563eb}q_\pi(s', a')}$ for the next $(s', a')$ is **exactly** the $(S, {\color{#f97316}A}, {\color{#dc2626}R}, S', {\color{#f97316}A'})$ tuple SARSA collects.
 :::
 :::
 
@@ -932,18 +932,18 @@ self-correction is what makes TD work.
 Putting both ideas together:
 
 $$
-\boxed{\;Q(s, a) \;\leftarrow\; Q(s, a) \;+\; \alpha\, \Bigl[\, \underbrace{r + \gamma\, Q(s', a')}_{\text{TD target}} \;-\; \underbrace{Q(s, a)}_{\text{current estimate}}\, \Bigr]\;}
+\boxed{\;{\color{#2563eb}Q(s, a)} \;\leftarrow\; {\color{#2563eb}Q(s, a)} \;+\; \alpha\, \Bigl[\, \underbrace{{\color{#dc2626}r} + \gamma\, {\color{#2563eb}Q(s', a')}}_{\text{TD target}} \;-\; \underbrace{{\color{#2563eb}Q(s, a)}}_{\text{current estimate}}\, \Bigr]\;}
 $$
 
 ::: {.fragment}
 The bracketed quantity is the **TD error**:
 $$
-\delta \;=\; r + \gamma\, Q(s', a') \;-\; Q(s, a)
+\delta \;=\; \underbrace{{\color{#dc2626}r} + \gamma\, {\color{#2563eb}Q(s', a')}}_{\text{target}} \;-\; \underbrace{{\color{#2563eb}Q(s, a)}}_{\text{estimate}}
 $$
 :::
 
 ::: {.fragment}
-**Reading.** Nudge the estimate $Q(s, a)$ a fraction $\alpha$ of the way toward what Bellman would say *if we trusted our current estimates and one observed transition*.
+**Reading.** Nudge the estimate $\color{#2563eb}Q(s, a)$ a fraction $\alpha$ of the way toward what Bellman would say *if we trusted our current estimates and one observed transition*.
 :::
 
 ::: notes
@@ -1069,7 +1069,7 @@ the slide and is the visual mnemonic for the name on the next slide.
 The five elements of the chain:
 
 $$
-\Bigl( \;\mathbf{S},\;\; \mathbf{A},\;\; \mathbf{R},\;\; \mathbf{S}',\;\; \mathbf{A}'\; \Bigr)
+\Bigl( \;{\color{#2563eb}\mathbf{S}},\;\; {\color{#f97316}\mathbf{A}},\;\; {\color{#dc2626}\mathbf{R}},\;\; {\color{#2563eb}\mathbf{S}'},\;\; {\color{#f97316}\mathbf{A}'}\; \Bigr)
 $$
 
 ::: {.fragment .callout-tip}
@@ -1220,14 +1220,14 @@ if technical setup allows; otherwise show the static figure.
 
 **SARSA:**
 $$
-Q(S, A) \;\leftarrow\; Q(S, A) + \alpha \,\Bigl[\, R + \gamma\, \mathbf{Q(S', A')} - Q(S, A)\, \Bigr]
+Q(S, A) \;\leftarrow\; Q(S, A) + \alpha \,\Bigl[\, R + \gamma\, {\color{#2563eb}\mathbf{Q(S', A')}} - Q(S, A)\, \Bigr]
 $$
-*Target uses the action $A'$ that the agent will actually take.*
+*Target uses the action $\color{#f97316}A'$ that the agent will actually take.*
 
 ::: {.fragment}
 **Q-learning:**
 $$
-Q(S, A) \;\leftarrow\; Q(S, A) + \alpha \,\Bigl[\, R + \gamma\, \mathbf{\max_{a'} Q(S', a')} - Q(S, A)\, \Bigr]
+Q(S, A) \;\leftarrow\; Q(S, A) + \alpha \,\Bigl[\, R + \gamma\, {\color{#dc2626}\mathbf{\max_{a'} Q(S', a')}} - Q(S, A)\, \Bigr]
 $$
 *Target uses the **best** possible next action — regardless of what the agent will do.*
 :::
