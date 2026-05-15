@@ -1,0 +1,5 @@
+figures/screenshots/
+.DS_Store
+*.swp
+*.swo
+.quarto/
