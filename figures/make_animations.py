@@ -71,9 +71,9 @@ def animate_q_evolution(out_path: Path):
     snap50 = _make_q_overlay_episode_50()
     snap500 = _make_q_overlay_episode_500()
 
-    n_a = 12
-    n_b = 16
-    hold = 6
+    n_a = 4
+    n_b = 5
+    hold = 2
     frames = []
     for i in range(n_a):
         t = _ease(i / (n_a - 1))
@@ -84,10 +84,10 @@ def animate_q_evolution(out_path: Path):
         t = _ease(i / (n_b - 1))
         ep = int(round(50 + t * 450))
         frames.append((ep, _interp(snap50, snap500, t)))
-    for _ in range(hold + 4):
+    for _ in range(hold + 1):
         frames.append((500, snap500))
 
-    fig, ax = plt.subplots(figsize=(7, 7))
+    fig, ax = plt.subplots(figsize=(4.5, 4.5), dpi=85)
 
     def render(frame_idx):
         ax.clear()
