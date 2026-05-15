@@ -1,0 +1,30 @@
+font.family: sans-serif
+font.sans-serif: Source Sans Pro, Helvetica, Arial, sans-serif
+font.size: 14
+axes.titlesize: 16
+axes.labelsize: 14
+xtick.labelsize: 12
+ytick.labelsize: 12
+legend.fontsize: 12
+figure.dpi: 100
+savefig.dpi: 140
+savefig.bbox: tight
+savefig.facecolor: white
+figure.facecolor: white
+axes.facecolor: white
+axes.edgecolor: "#1f2937"
+axes.linewidth: 1.0
+axes.spines.top: False
+axes.spines.right: False
+xtick.color: "#1f2937"
+ytick.color: "#1f2937"
+text.color: "#1f2937"
+axes.labelcolor: "#1f2937"
+grid.color: "#e5e7eb"
+grid.linewidth: 0.5
+grid.alpha: 0.7
+lines.linewidth: 2.0
+lines.markersize: 6
+patch.edgecolor: "#1f2937"
+patch.linewidth: 0.5
+axes.prop_cycle: cycler(color=["#2563eb", "#f97316", "#dc2626", "#a855f7", "#10b981", "#0891b2"])

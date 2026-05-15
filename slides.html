@@ -213,7 +213,7 @@ Carlos Cotrini
 <p>. . .</p>
 <p><strong>The question.</strong> What is the best plan? And how could the robot <em>learn</em> one without being told the rules?</p>
 </div><div class="column" style="width:45%;">
-<!-- FIGURE: 4×4 gridworld with robot, package cell, depot cell, and slippery cells highlighted. Generated in figures/warehouse.png -->
+<p><img data-src="figures/warehouse_hook.png" style="width:100.0%"></p>
 </div></div>
 <aside class="notes">
 <p>4×4 grid. Robot picks up package, delivers to depot. Stochastic floor (slip), finite battery. This is our running example for ALL of today. Figure: gridworld render with robot, package, depot, slippery cells.</p>
@@ -388,6 +388,8 @@ Carlos Cotrini
 </section>
 <section id="an-mdp-is-a-5-tuple-langle-mathcals-mathcala-p-r-gamma-rangle" class="slide level2">
 <h2>An MDP is a 5-tuple <span class="math inline">\(\langle \mathcal{S}, \mathcal{A}, P, R, \gamma \rangle\)</span></h2>
+<div class="columns">
+<div class="column" style="width:55%;">
 <table class="caption-top">
 <colgroup>
 <col style="width: 14%">
@@ -429,7 +431,9 @@ Carlos Cotrini
 </tr>
 </tbody>
 </table>
-<p>We will unpack each on its own slide, illustrated on the warehouse robot.</p>
+</div><div class="column" style="width:45%;">
+<p><img data-src="figures/agent_env_loop.png" style="width:100.0%"></p>
+</div></div>
 <aside class="notes">
 <p>One slide naming all five components. Detail per component on next 5 slides.</p>
 <style type="text/css">
@@ -497,34 +501,13 @@ Carlos Cotrini
 </section>
 <section id="p-the-transition-kernel" class="slide level2">
 <h2><span class="math inline">\(P\)</span> — the transition kernel</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
 <p><span class="math display">\[
 P(s' \mid s, a) \;=\; \Pr\!\left[\,S_{t+1} = s' \,\big|\, S_t = s,\ A_t = a\,\right]
 \]</span></p>
 <p>A <em>probability distribution</em> over next states. Sums to <span class="math inline">\(1\)</span> over <span class="math inline">\(s'\)</span>.</p>
-<p><strong>Warehouse step (slippery floor):</strong></p>
-<table class="caption-top">
-<thead>
-<tr class="header">
-<th>Outcome</th>
-<th>Probability</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Move in intended direction</td>
-<td>0.80</td>
-</tr>
-<tr class="even">
-<td>Slip 90° left</td>
-<td>0.10</td>
-</tr>
-<tr class="odd">
-<td>Slip 90° right</td>
-<td>0.10</td>
-</tr>
-</tbody>
-</table>
-<p>A wall in the chosen direction → the robot stays in place.</p>
+<p><strong>Warehouse step (slippery floor):</strong> intended N happens 80 %; left- and right-slips happen 10 % each.</p>
 <div class="fragment">
 <div class="callout callout-warning callout-titled callout-style-default">
 <div class="callout-body">
@@ -535,11 +518,14 @@ P(s' \mid s, a) \;=\; \Pr\!\left[\,S_{t+1} = s' \,\big|\, S_t = s,\ A_t = a\,\ri
 <p><strong>Warning</strong></p>
 </div>
 <div class="callout-content">
-<p>In the real world, we <strong>do not know</strong> <span class="math inline">\(P\)</span>. That is the whole reason today’s lecture exists.</p>
+<p>In the real world we <strong>do not know</strong> <span class="math inline">\(P\)</span>. That is the whole reason today’s lecture exists.</p>
 </div>
 </div>
 </div>
 </div>
+</div><div class="column" style="width:45%;">
+<p><img data-src="figures/stochastic_step.png" style="width:100.0%"></p>
+</div></div>
 <aside class="notes">
 <p>P(s’ | s, a). Show stochastic warehouse step: 80% intended direction, 10% left-slip, 10% right-slip. Walls = stay in place. This is the “kernel” because we don’t know it in real engineering problems.</p>
 <style type="text/css">
@@ -601,17 +587,9 @@ R(s, a, s') \;=\; \text{scalar reward observed when } s \xrightarrow{a} s'
 </section>
 <section id="gamma-the-discount-factor" class="slide level2">
 <h2><span class="math inline">\(\gamma\)</span> — the discount factor</h2>
-<p><span class="math display">\[
-\gamma \in [0,\ 1]
-\]</span></p>
-<p>Future rewards are <em>discounted</em> by <span class="math inline">\(\gamma\)</span> per step.</p>
-<p><strong>Engineering intuitions for <span class="math inline">\(\gamma &lt; 1\)</span>:</strong></p>
-<ul>
-<li>A charged battery <strong>now</strong> is worth more than the same battery five steps from now.</li>
-<li>A sensor reading <strong>now</strong> is worth more than the same reading next loop iteration.</li>
-<li>It keeps infinite-horizon sums <strong>finite</strong>.</li>
-</ul>
-<div class="fragment" title="Pre-empt">
+<p><span class="math inline">\(\gamma \in [0,\ 1]\)</span> — future rewards are <em>discounted</em> by <span class="math inline">\(\gamma\)</span> per step. Battery <strong>now</strong> <span class="math inline">\(&gt;\)</span> battery in five steps; keeps infinite-horizon sums <strong>finite</strong>.</p>
+
+<img data-src="figures/gamma_decay.png" class="quarto-figure quarto-figure-center r-stretch" style="width:65.0%"><div title="Pre-empt">
 <div class="callout callout-warning callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
@@ -621,7 +599,7 @@ R(s, a, s') \;=\; \text{scalar reward observed when } s \xrightarrow{a} s'
 <p><strong>Pre-empt</strong></p>
 </div>
 <div class="callout-content">
-<p>A <em>large</em> <span class="math inline">\(\gamma\)</span> does <strong>not</strong> mean a short-term focus. Quite the opposite — <span class="math inline">\(\gamma\)</span> close to <span class="math inline">\(1\)</span> makes the agent <strong>patient</strong>.</p>
+<p>A <em>large</em> <span class="math inline">\(\gamma\)</span> does <strong>not</strong> mean short-term focus — <span class="math inline">\(\gamma\)</span> close to <span class="math inline">\(1\)</span> makes the agent <strong>patient</strong>.</p>
 </div>
 </div>
 </div>
@@ -643,13 +621,8 @@ R(s, a, s') \;=\; \text{scalar reward observed when } s \xrightarrow{a} s'
 <section id="trajectories-and-episodes" class="slide level2">
 <h2>Trajectories and episodes</h2>
 <p>A <strong>trajectory</strong> is the sequence the MDP generates:</p>
-<p><span class="math display">\[
-S_0,\ A_0,\ R_1,\ S_1,\ A_1,\ R_2,\ S_2,\ A_2,\ R_3,\ \dots
-\]</span></p>
-<div class="fragment">
-<p>An <strong>episode</strong> is a trajectory that ends in a <em>terminal</em> state.</p>
-</div>
-<div class="fragment">
+
+<img data-src="figures/trajectory.png" class="quarto-figure quarto-figure-center r-stretch" style="width:95.0%"><p>An <strong>episode</strong> is a trajectory that ends in a <em>terminal</em> state.</p>
 <p><strong>Warehouse:</strong> an episode ends when the package is delivered, or the battery dies.</p>
 <aside class="notes">
 <p>S_0, A_0, R_1, S_1, A_1, R_2, … Episode = trajectory ending in terminal state. Warehouse: episode ends when package delivered or battery dies. Note again: reward at index t+1 is the consequence of acting at time t.</p>
@@ -664,21 +637,12 @@ S_0,\ A_0,\ R_1,\ S_1,\ A_1,\ R_2,\ S_2,\ A_2,\ R_3,\ \dots
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-</div>
 </section>
 <section id="policies-deterministic-and-stochastic" class="slide level2">
 <h2>Policies: deterministic and stochastic</h2>
-<p>A <strong>policy</strong> <span class="math inline">\(\pi\)</span> tells the agent how to act.</p>
-<p><strong>Stochastic</strong> (the general case): <span class="math display">\[
-\pi(a \mid s) \;=\; \Pr\!\left[\,A_t = a \,\big|\, S_t = s\,\right]
-\]</span></p>
-<p><strong>Deterministic:</strong> <span class="math display">\[
-\pi(s) \;=\; a
-\]</span></p>
-<div class="fragment">
-<p><strong>Warehouse examples.</strong> Deterministic: <em>“always go N until on the package row, then E.”</em> Stochastic: <em>“60 % N, 40 % E.”</em></p>
-</div>
-<div class="fragment">
+<p><strong>Stochastic:</strong> <span class="math inline">\(\pi(a \mid s) = \Pr[A_t = a \mid S_t = s]\)</span> &nbsp;·&nbsp; <strong>Deterministic:</strong> <span class="math inline">\(\pi(s) = a\)</span></p>
+
+<img data-src="figures/policies.png" class="quarto-figure quarto-figure-center r-stretch" style="width:92.0%"><div class="fragment">
 <p>We will see soon why we sometimes <em>want</em> stochastic policies — to <strong>explore</strong>.</p>
 </div>
 <aside class="notes">
@@ -1007,8 +971,10 @@ v_\pi(s) \;=\; \mathbb{E}_\pi[R_{t+1} \mid S_t = s] \;+\; \gamma\, \mathbb{E}_\p
 </section>
 <section id="bellman-expectation-equation-for-v_pi" class="slide level2">
 <h2>Bellman expectation equation for <span class="math inline">\(v_\pi\)</span> ★</h2>
+<div class="columns">
+<div class="column" style="width:65%;">
 <p><span class="math display">\[
-\boxed{\;v_\pi(s) \;=\; \sum_a \pi(a \mid s) \sum_{s'} P(s' \mid s, a) \Bigl[\, R(s, a, s') + \gamma\, v_\pi(s') \,\Bigr]\;}
+\boxed{\;v_\pi(s) \;=\; \sum_a \pi(a \mid s) \sum_{s'} P(s' \mid s, a) \Bigl[\, R(s,a,s') + \gamma\, v_\pi(s') \,\Bigr]\;}
 \]</span></p>
 <div class="fragment">
 <p><strong>Reading.</strong> Take an action under <span class="math inline">\(\pi\)</span> → observe <span class="math inline">\((r, s')\)</span> → receive <span class="math inline">\(r\)</span>, then the value of where you land — <strong>averaged over everything random</strong>.</p>
@@ -1016,6 +982,9 @@ v_\pi(s) \;=\; \mathbb{E}_\pi[R_{t+1} \mid S_t = s] \;+\; \gamma\, \mathbb{E}_\p
 <div class="fragment">
 <p>A <strong>self-consistency</strong> equation: <span class="math inline">\(v_\pi\)</span> appears on both sides.</p>
 </div>
+</div><div class="column" style="width:35%;">
+<p><img data-src="figures/backup_v.png" style="width:100.0%"></p>
+</div></div>
 <aside class="notes">
 <p>v_π(s) = Σ_a π(a|s) Σ_{s’} P(s’|s,a) [R(s,a,s’) + γ v_π(s’)]. This and the next slide are the most important slides of the lecture. Take time. Annotate every term in colour: π(a|s) blue, P(s’|s,a) orange, R green, γ v_π(s’) purple. “Self-consistency” — not a definition, not an equation to plug in, but a constraint that v_π must satisfy.</p>
 <style type="text/css">
@@ -1032,11 +1001,10 @@ v_\pi(s) \;=\; \mathbb{E}_\pi[R_{t+1} \mid S_t = s] \;+\; \gamma\, \mathbb{E}_\p
 </section>
 <section id="bellman-expectation-equation-for-q_pi" class="slide level2">
 <h2>Bellman expectation equation for <span class="math inline">\(q_\pi\)</span> ★★</h2>
+<div class="columns">
+<div class="column" style="width:65%;">
 <p><span class="math display">\[
-\boxed{\;q_\pi(s, a) \;=\; \sum_{s'} P(s' \mid s, a) \Bigl[\, R(s, a, s') + \gamma\, \textstyle\sum_{a'} \pi(a' \mid s')\, q_\pi(s', a') \,\Bigr]\;}
-\]</span></p>
-<p>The inner sum equals <span class="math inline">\(v_\pi(s')\)</span>, so equivalently: <span class="math display">\[
-q_\pi(s, a) \;=\; \sum_{s'} P(s' \mid s, a) \Bigl[\, R(s, a, s') + \gamma\, v_\pi(s') \,\Bigr]
+\boxed{\;q_\pi(s, a) \;=\; \sum_{s'} P(s' \mid s, a) \Bigl[\, R(s,a,s') + \gamma\, \textstyle\sum_{a'} \pi(a' \mid s')\, q_\pi(s', a') \,\Bigr]\;}
 \]</span></p>
 <div class="fragment" title="THIS is the equation SARSA samples">
 <div class="callout callout-important callout-titled callout-style-default">
@@ -1053,6 +1021,9 @@ q_\pi(s, a) \;=\; \sum_{s'} P(s' \mid s, a) \Bigl[\, R(s, a, s') + \gamma\, v_\p
 </div>
 </div>
 </div>
+</div><div class="column" style="width:35%;">
+<p><img data-src="figures/backup_q.png" style="width:100.0%"></p>
+</div></div>
 <aside class="notes">
 <p>q_π(s,a) = Σ_{s’} P(s’|s,a) [R(s,a,s’) + γ Σ_{a’} π(a’|s’) q_π(s’,a’)]. THIS IS THE EQUATION SARSA SAMPLES. Highlight visually. Spend 4–5 minutes. The annotation under the brace shows that the inner sum equals v_π(s’), giving us a third form: q_π(s,a) = Σ P [R + γ v_π(s’)]. Three equivalent forms — all the same equation.</p>
 <style type="text/css">
@@ -1069,21 +1040,19 @@ q_\pi(s, a) \;=\; \sum_{s'} P(s' \mid s, a) \Bigl[\, R(s, a, s') + \gamma\, v_\p
 </section>
 <section id="worked-example-compute-q_pi-by-hand" class="slide level2">
 <h2>Worked example: compute <span class="math inline">\(q_\pi\)</span> by hand</h2>
-<p>A 3-state chain. Actions: <code>left</code>, <code>right</code>. Transitions deterministic. Step cost <span class="math inline">\(-1\)</span>; entering the terminal <span class="math inline">\(T\)</span> gives reward <span class="math inline">\(+10\)</span>. Discount <span class="math inline">\(\gamma = 0.9\)</span>. Policy <span class="math inline">\(\pi\)</span> = “always <code>right</code>.”</p>
-<!-- FIGURE: linear chain  s_1 ⇄ s_2 → T  with arrows for `left` and `right`; rewards −1 per step, +10 on entering T -->
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><strong>Bellman expectation gives:</strong> <span class="math display">\[
+<p>3-state chain. Actions <code>left</code>, <code>right</code>. Deterministic transitions; step cost <span class="math inline">\(-1\)</span>; entering terminal <span class="math inline">\(T\)</span> gives <span class="math inline">\(+10\)</span>; <span class="math inline">\(\gamma = 0.9\)</span>; policy <span class="math inline">\(\pi\)</span> = always <code>right</code>.</p>
+
+<img data-src="figures/chain_worked.png" class="quarto-figure quarto-figure-center r-stretch" style="width:55.0%"><div class="columns">
+<div class="column" style="width:55%;">
+<p><strong>Bellman expectation chains back:</strong> <span class="math display">\[
 \begin{aligned}
 q_\pi(s_2, \mathrm{right}) &amp;= +10 \\
 q_\pi(s_1, \mathrm{right}) &amp;= -1 + \gamma\, q_\pi(s_2, \mathrm{right}) \\
-q_\pi(s_2, \mathrm{left})  &amp;= -1 + \gamma\, q_\pi(s_1, \mathrm{right}) \\
-q_\pi(s_1, \mathrm{left})  &amp;= -1 + \gamma\, q_\pi(s_1, \mathrm{right})
+q_\pi(s_2, \mathrm{left})  &amp;= -1 + \gamma\, q_\pi(s_1, \mathrm{right})
 \end{aligned}
 \]</span></p>
-</div><div class="column" style="width:50%;">
+</div><div class="column" style="width:45%;">
 <div class="fragment">
-<p><strong>Substituting back:</strong></p>
 <table class="caption-top">
 <thead>
 <tr class="header">
@@ -1104,13 +1073,9 @@ q_\pi(s_1, \mathrm{left})  &amp;= -1 + \gamma\, q_\pi(s_1, \mathrm{right})
 <td><span class="math inline">\((s_2, \mathrm{left})\)</span></td>
 <td style="text-align: right;"><span class="math inline">\(+6.2\)</span></td>
 </tr>
-<tr class="even">
-<td><span class="math inline">\((s_1, \mathrm{left})\)</span></td>
-<td style="text-align: right;"><span class="math inline">\(+6.2\)</span></td>
-</tr>
 </tbody>
 </table>
-<p>This <strong>only worked</strong> because we knew <span class="math inline">\(P\)</span> and <span class="math inline">\(R\)</span>.</p>
+<p>Only possible because we knew <span class="math inline">\(P, R\)</span>.</p>
 </div>
 </div></div>
 <aside class="notes">
@@ -1129,17 +1094,18 @@ q_\pi(s_1, \mathrm{left})  &amp;= -1 + \gamma\, q_\pi(s_1, \mathrm{right})
 </section>
 <section id="bellman-optimality-the-dream" class="slide level2">
 <h2>Bellman optimality — the dream</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
 <p>The <strong>optimal</strong> value functions: <span class="math display">\[
-v_*(s) \;=\; \max_\pi v_\pi(s), \qquad q_*(s, a) \;=\; \max_\pi q_\pi(s, a)
+v_*(s) = \max_\pi v_\pi(s),\quad q_*(s,a) = \max_\pi q_\pi(s, a)
 \]</span></p>
-<div class="fragment">
-<p>There is always a deterministic optimal policy <span class="math inline">\(\pi_*\)</span>. Its action-value satisfies the <strong>Bellman optimality equation:</strong> <span class="math display">\[
-q_*(s, a) \;=\; \sum_{s'} P(s' \mid s, a) \Bigl[\, R(s, a, s') + \gamma\, \max_{a'} q_*(s', a') \,\Bigr]
+<p>There is always a deterministic optimal policy <span class="math inline">\(\pi_*\)</span>: <span class="math display">\[
+q_*(s, a) = \sum_{s'} P(s'|s,a) \bigl[ R + \gamma \max_{a'} q_*(s', a') \bigr]
 \]</span></p>
-</div>
-<div class="fragment">
-<p>Only difference vs.&nbsp;Bellman expectation: <span class="math inline">\(\sum_{a'} \pi(a'|s')\)</span> → <span class="math inline">\(\max_{a'}\)</span>. We won’t dwell on <span class="math inline">\(q_*\)</span>; the rest of the lecture <strong>estimates <span class="math inline">\(q_\pi\)</span> for a gradually-improving policy</strong>.</p>
-</div>
+<p>Only difference vs.&nbsp;expectation: <span class="math inline">\(\sum_{a'} \pi(a'|s') \to \max_{a'}\)</span>. The rest of the lecture <strong>estimates <span class="math inline">\(q_\pi\)</span> for a gradually-improving policy</strong>.</p>
+</div><div class="column" style="width:45%;">
+<p><img data-src="figures/optimal_policy.png" style="width:100.0%"></p>
+</div></div>
 <aside class="notes">
 <p>Name v* and q<em>. State the optimality equation. The MAX vs the sum-over-π is the only structural difference. Don’t dwell — Block 3 is about estimating q_π for a slowly-improving policy, not about computing q_</em> directly. The Q-learning teaser at the end of Block 3 will be the only time we actually USE the max.</p>
 <style type="text/css">
@@ -1181,39 +1147,21 @@ q_*(s, a) \;=\; \sum_{s'} P(s' \mid s, a) \Bigl[\, R(s, a, s') + \gamma\, \max_{
 </section>
 <section id="where-td-sits-sample-bootstrap" class="slide level2">
 <h2>Where TD sits — sample × bootstrap</h2>
-<table class="caption-top">
-<colgroup>
-<col style="width: 27%">
-<col style="width: 30%">
-<col style="width: 42%">
-</colgroup>
-<thead>
-<tr class="header">
-<th></th>
-<th><strong>No sampling</strong></th>
-<th><strong>Sampling</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>No bootstrapping</strong></td>
-<td>exhaustive search</td>
-<td><strong>Monte Carlo</strong> (full returns)</td>
-</tr>
-<tr class="even">
-<td><strong>Bootstrapping</strong></td>
-<td><strong>Dynamic Programming</strong></td>
-<td><strong>Temporal Difference</strong> ★</td>
-</tr>
-</tbody>
-</table>
-<div class="fragment">
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="figures/unified_2x2.png" class="quarto-figure quarto-figure-center" style="width:85.0%"></p>
+</figure>
+</div>
+</div><div class="column" style="width:50%;">
 <ul>
 <li><strong>DP.</strong> Computes the expectation exactly — needs <span class="math inline">\(P\)</span> and <span class="math inline">\(R\)</span>.</li>
 <li><strong>MC.</strong> Samples whole episodes — no bootstrapping, but high variance.</li>
-<li><strong>TD.</strong> Samples one transition, bootstraps off the current estimate. <strong>SARSA lives here.</strong></li>
+<li><strong>TD.</strong> Samples one transition, bootstraps off the current estimate.</li>
+<li><strong>SARSA lives in the TD corner.</strong></li>
 </ul>
-</div>
+</div></div>
 <aside class="notes">
 <p>CMU 2×2: rows = bootstrap?, columns = sample? - DP: bootstrap, no-sample (needs full P, R) - MC: sample, no-bootstrap (full episodes) - TD: sample AND bootstrap ← SARSA lives here - (empty corner: exhaustive search) This is one of the cleanest single-slide expositions of where TD sits in the algorithm landscape.</p>
 <style type="text/css">
@@ -1356,19 +1304,8 @@ q_\pi(s, \mathrm{N}) \;=\; -1 + \gamma \Bigl[\, 0.8\, q_\pi(s_N, \mathrm{N}) \,+
 </section>
 <section id="driving-home-a-td-intuition-pump" class="slide level2">
 <h2>Driving home — a TD intuition pump</h2>
-<p>You’re driving home from work. At each landmark you keep an estimate of total time to home.</p>
-<div class="fragment">
-<ul>
-<li><strong>Office (start).</strong> Estimate: 30 min.</li>
-<li><strong>Landmark 2.</strong> No new info → still ~30 min.</li>
-<li><strong>Landmark 3.</strong> Hit unexpected traffic. Realise you’re going to be late.</li>
-</ul>
-</div>
-<div class="fragment">
-<p><strong>Question.</strong> Do you wait until you actually get home to update your <strong>office</strong> estimate? Or do you bump it <strong>right now</strong>, using your updated estimate at landmark 3?</p>
-</div>
-<div class="fragment">
-<div class="callout callout-important callout-titled callout-style-default">
+
+<img data-src="figures/driving_home.png" class="quarto-figure quarto-figure-center r-stretch" style="width:95.0%"><div class="callout callout-important callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
 <div class="callout-icon-container">
@@ -1377,8 +1314,7 @@ q_\pi(s, \mathrm{N}) \;=\; -1 + \gamma \Bigl[\, 0.8\, q_\pi(s_N, \mathrm{N}) \,+
 <p><strong>Important</strong></p>
 </div>
 <div class="callout-content">
-<p>Of course you bump it now. That is <strong>bootstrapping</strong>. This is the heart of TD — and you don’t need an MDP to feel it.</p>
-</div>
+<p><strong>MC</strong> waits for the trip to end before correcting any estimate. <strong>TD</strong> corrects each estimate the moment the <em>next</em> one moves. That is <strong>bootstrapping</strong> — and you don’t need an MDP to feel it.</p>
 </div>
 </div>
 </div>
@@ -1582,21 +1518,15 @@ q_\pi(s,a) \;=\; \sum_{s'} P(s'|s,a) \Bigl[ R(s,a,s') + \gamma \sum_{a'} \pi(a'|
 </section>
 <section id="varepsilon-greedy" class="slide level2">
 <h2><span class="math inline">\(\varepsilon\)</span>-greedy</h2>
-<p>A simple, near-universal exploration rule.</p>
 <p><span class="math display">\[
 A_t \;=\;
 \begin{cases}
-\arg\max_a Q(S_t, a) &amp; \text{with probability } 1 - \varepsilon \\
-\text{uniform random action} &amp; \text{with probability } \varepsilon
+\arg\max_a Q(S_t, a) &amp; \text{with prob.\ } 1 - \varepsilon \\
+\text{uniform random} &amp; \text{with prob.\ } \varepsilon
 \end{cases}
 \]</span></p>
-<div class="fragment">
-<p><strong>Behaviour at the extremes:</strong></p>
-<table class="caption-top">
-<colgroup>
-<col style="width: 21%">
-<col style="width: 78%">
-</colgroup>
+
+<img data-src="figures/epsilon_greedy_split.png" class="quarto-figure quarto-figure-center r-stretch" style="width:40.0%"><table class="caption-top">
 <thead>
 <tr class="header">
 <th><span class="math inline">\(\varepsilon\)</span></th>
@@ -1606,36 +1536,18 @@ A_t \;=\;
 <tbody>
 <tr class="odd">
 <td><span class="math inline">\(0\)</span></td>
-<td>pure exploit — the catastrophe on the previous slide</td>
+<td>pure exploit — catastrophe (last slide)</td>
 </tr>
 <tr class="even">
 <td><span class="math inline">\(1\)</span></td>
-<td>pure random walk — never uses what it has learned</td>
+<td>pure random walk — no learning</td>
 </tr>
 <tr class="odd">
 <td><span class="math inline">\(0.1\)</span></td>
-<td>typical default: 90 % greedy, 10 % “try something new”</td>
+<td>typical default</td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="fragment">
-<div class="callout callout-tip callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Tip</strong></p>
-</div>
-<div class="callout-content">
-<blockquote>
-<p><em>“Are you sure you’ve chosen the best door?”</em> — David Silver, UCL Lecture 5</p>
-</blockquote>
-</div>
-</div>
-</div>
-</div>
 <aside class="notes">
 <p>With probability 1−ε, take arg max_a Q(s,a). With probability ε, take a uniformly random action. Two-doors example: open the right door 3 times in a row, both times reward = 0. Are you SURE the left door isn’t better? You haven’t tried it yet.</p>
 <style type="text/css">
@@ -1652,11 +1564,11 @@ A_t \;=\;
 </section>
 <section id="varepsilon-schedules" class="slide level2">
 <h2><span class="math inline">\(\varepsilon\)</span> schedules</h2>
-<p><strong>Constant <span class="math inline">\(\varepsilon\)</span></strong> (e.g.&nbsp;<span class="math inline">\(0.1\)</span>). Simple. Works in many problems. But the policy stays <em>forever</em> stochastic, so it can never reach the optimum.</p>
-<div class="fragment">
-<p><strong>Decaying <span class="math inline">\(\varepsilon\)</span></strong> (e.g.&nbsp;<span class="math inline">\(\varepsilon_t = 1/t\)</span>). Explore early; exploit late.</p>
-</div>
-<div class="fragment" title="GLIE">
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Constant <span class="math inline">\(\varepsilon\)</span></strong> — simple, but the policy stays <em>forever</em> stochastic and never reaches the optimum.</p>
+<p><strong>Decaying <span class="math inline">\(\varepsilon\)</span></strong> (<span class="math inline">\(\varepsilon_t = 1/t\)</span>, exponential, …) — explore early, exploit late.</p>
+<div title="GLIE">
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
@@ -1666,12 +1578,14 @@ A_t \;=\;
 <p><strong>GLIE</strong></p>
 </div>
 <div class="callout-content">
-<p><em>Greedy in the Limit with Infinite Exploration.</em> A schedule that: - visits every <span class="math inline">\((s, a)\)</span> infinitely often, <strong>and</strong> - becomes greedy in the limit.</p>
-<p>This is the formal condition that lets SARSA converge to the optimal policy.</p>
+<p><em>Greedy in the Limit with Infinite Exploration:</em> visit every <span class="math inline">\((s, a)\)</span> infinitely often AND become greedy in the limit. The formal condition for SARSA to converge to the optimal policy.</p>
 </div>
 </div>
 </div>
 </div>
+</div><div class="column" style="width:50%;">
+<p><img data-src="figures/epsilon_schedules.png" style="width:100.0%"></p>
+</div></div>
 <aside class="notes">
 <p>Constant ε vs decaying ε. Why decay: explore early when Q is bad, exploit late when Q is good. GLIE = “Greedy in the Limit with Infinite Exploration” — the formal condition for SARSA’s policy convergence. ε = 1/t is the simplest schedule that satisfies GLIE.</p>
 <style type="text/css">
@@ -1688,20 +1602,35 @@ A_t \;=\;
 </section>
 <section id="sarsa-backup-diagram" class="slide level2">
 <h2>SARSA backup diagram</h2>
-<p>The five elements of one update step, drawn as a chain:</p>
-<p><span class="math display">\[
-\underbrace{S}_{\text{state}} \;\;\longrightarrow\;\; \underbrace{A}_{\text{action}} \;\;\longrightarrow\;\; \underbrace{R}_{\text{reward}} \;\;\longrightarrow\;\; \underbrace{S'}_{\text{next state}} \;\;\longrightarrow\;\; \underbrace{A'}_{\text{next action}}
-\]</span></p>
-<div class="fragment">
+<div class="columns">
+<div class="column" style="width:35%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="figures/backup_sarsa.png" class="quarto-figure quarto-figure-center" style="width:80.0%"></p>
+</figure>
+</div>
+</div><div class="column" style="width:65%;">
 <ul>
 <li><span class="math inline">\(A\)</span> chosen <span class="math inline">\(\varepsilon\)</span>-greedily from <span class="math inline">\(Q(S, \cdot)\)</span></li>
-<li><span class="math inline">\(R, S'\)</span> observed from the environment</li>
+<li><span class="math inline">\(R\)</span>, <span class="math inline">\(S'\)</span> observed from the environment</li>
 <li><span class="math inline">\(A'\)</span> chosen <span class="math inline">\(\varepsilon\)</span>-greedily from <span class="math inline">\(Q(S', \cdot)\)</span></li>
 </ul>
-</div>
 <div class="fragment">
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important</strong></p>
+</div>
+<div class="callout-content">
 <p>The chain <strong>is</strong> the algorithm.</p>
 </div>
+</div>
+</div>
+</div>
+</div></div>
 <aside class="notes">
 <p>Vertical visual would be even better. The chain IS the algorithm. Each arrow is one observation/decision step. The whole picture fits on the slide and is the visual mnemonic for the name on the next slide.</p>
 <style type="text/css">
@@ -1803,15 +1732,10 @@ Repeat (for each episode):
 </section>
 <section id="visualising-q-on-the-gridworld" class="slide level2">
 <h2>Visualising <span class="math inline">\(Q\)</span> on the gridworld</h2>
-<p>Each cell is <strong>quartered</strong> — one triangle per action <span class="math inline">\(\{N, S, E, W\}\)</span>. The number in the triangle is <span class="math inline">\(Q(s, a)\)</span>. The arrow leaving the cell shows <span class="math inline">\(\arg\max_a Q(s, a)\)</span>.</p>
-<!-- FIGURE: three snapshots of the warehouse gridworld, each cell quartered with Q-values written in. Captioned: episode 0 (Q ≡ 0), episode 50 (some structure), episode 500 (clear value flow toward depot). -->
-<div class="fragment">
-<p><strong>What you should see develop over training:</strong></p>
-<ul>
-<li>Cells near the depot acquire the highest values first.</li>
-<li>Value “flows backwards” from the depot through the gridworld.</li>
-<li>Arrows align with the optimal-or-near-optimal direction of travel.</li>
-</ul>
+<p>Each cell is <strong>quartered</strong> — one triangle per action <span class="math inline">\(\{N, S, E, W\}\)</span>. Number in each triangle = <span class="math inline">\(Q(s, a)\)</span>.</p>
+
+<img data-src="figures/q_evolution.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><div class="fragment">
+<p>Cells near the depot acquire high values first; value <strong>flows backwards</strong> from the depot through the gridworld.</p>
 </div>
 <aside class="notes">
 <p>CS188-style quartered-cell visualisation. Three snapshots show the “value flowing backwards from the goal” intuition. If presenting live, animate this with a slider over training episodes — much more memorable. Figure file path: figures/q_gridworld_evolution.png.</p>
@@ -1927,15 +1851,10 @@ Repeat (for each episode):
 </section>
 <section id="showcase-windy-gridworld" class="slide level2">
 <h2>Showcase — Windy Gridworld</h2>
-<p>A <span class="math inline">\(7 \times 10\)</span> grid. <strong>Wind</strong> blows the agent upward by 1 or 2 cells in the middle columns, regardless of the chosen action. Start <code>S</code>, goal <code>G</code>. Step cost <span class="math inline">\(-1\)</span>.</p>
-<!-- FIGURE: Windy Gridworld: 7×10 grid with start S, goal G, and wind strength 0/1/2 indicated below each column. Trajectory of trained SARSA agent overlaid. Side panel: learning curve (episodes on x-axis, time-steps on y-axis), characteristic concave-down shape. -->
-<div class="fragment">
-<p><strong>SARSA</strong> with <span class="math inline">\(\alpha = 0.5\)</span>, <span class="math inline">\(\varepsilon = 0.1\)</span>, <span class="math inline">\(\gamma = 1\)</span>:</p>
-<ul>
-<li>Finds a working path in <span class="math inline">\(\sim 100\)</span> episodes.</li>
-<li>Stable solution: <span class="math inline">\(\sim 17\)</span> steps per episode.</li>
-<li>Optimal (with this wind, no <span class="math inline">\(\varepsilon\)</span>): <span class="math inline">\(15\)</span> steps. The extra <span class="math inline">\(2\)</span> are the cost of exploration.</li>
-</ul>
+<p><span class="math inline">\(7 \times 10\)</span> grid. Wind blows the agent upward by 1 or 2 cells in middle columns, regardless of action. Start <code>S</code>, goal <code>G</code>. Step cost <span class="math inline">\(-1\)</span>.</p>
+
+<img data-src="figures/windy_gridworld.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><div class="fragment">
+<p>SARSA with <span class="math inline">\(\alpha = 0.5\)</span>, <span class="math inline">\(\varepsilon = 0.1\)</span> stabilises at <span class="math inline">\(\sim 17\)</span> steps; optimal is <span class="math inline">\(15\)</span> — the extra <span class="math inline">\(2\)</span> are the cost of exploration.</p>
 </div>
 <aside class="notes">
 <p>S&amp;B Ex 6.5. 7×10 grid, wind blows agent up by 1–2 cells in middle columns. SARSA with ε=0.1, α=0.5 finds shortest path (~17 steps; optimal is 15). Figure: gridworld + learning curve. Generate via Python script later. This is the “yes, the algorithm actually works” slide. Run it as a demo if technical setup allows; otherwise show the static figure.</p>
@@ -1992,15 +1911,9 @@ Q(S, A) \;\leftarrow\; Q(S, A) + \alpha \,\Bigl[\, R + \gamma\, \mathbf{\max_{a'
 </section>
 <section id="sarsa-vs-q-learning-the-cliff" class="slide level2">
 <h2>SARSA vs Q-learning — the Cliff</h2>
-<p>A grid with a <strong>cliff</strong> along the bottom row. Stepping into the cliff: <span class="math inline">\(R = -100\)</span> and reset to start. Every other step: <span class="math inline">\(R = -1\)</span>.</p>
-<!-- FIGURE: Cliff Walking grid. Bottom row marked CLIFF. Two trajectories overlaid: SARSA's path goes one row up (safe), Q-learning's path hugs the cliff edge (optimal but risky). Side panel: per-episode reward curve, Q-learning oscillates lower, SARSA higher and more stable. -->
-<div class="fragment">
-<ul>
-<li><strong>SARSA</strong> learns the <strong>safe</strong> path — one row above the cliff. It <em>accounts for</em> the <span class="math inline">\(\varepsilon\)</span>-greedy slip that occasionally pushes it off.</li>
-<li><strong>Q-learning</strong> learns the <strong>optimal-but-risky</strong> path — along the cliff edge. It pretends it will play greedily forever.</li>
-</ul>
-</div>
-<div class="fragment" title="The punchline">
+<p>Cliff on bottom row: stepping in gives <span class="math inline">\(R = -100\)</span> + reset. Every other step: <span class="math inline">\(R = -1\)</span>.</p>
+
+<img data-src="figures/cliff_walking.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><div class="fragment" title="The punchline">
 <div class="callout callout-tip callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
@@ -2010,8 +1923,7 @@ Q(S, A) \;\leftarrow\; Q(S, A) + \alpha \,\Bigl[\, R + \gamma\, \mathbf{\max_{a'
 <p><strong>The punchline</strong></p>
 </div>
 <div class="callout-content">
-<p><strong>SARSA</strong> learns about the policy it’s <em>actually following</em>.</p>
-<p><strong>Q-learning</strong> learns about the policy it <em>wishes</em> it could follow.</p>
+<p><strong>SARSA</strong> learns about the policy it’s <em>actually following</em>. <strong>Q-learning</strong> learns about the policy it <em>wishes</em> it could follow.</p>
 </div>
 </div>
 </div>

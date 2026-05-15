@@ -74,7 +74,7 @@ Walking comparison.
 :::
 
 ::: {.column width="45%"}
-<!-- FIGURE: 4×4 gridworld with robot, package cell, depot cell, and slippery cells highlighted. Generated in figures/warehouse.png -->
+![](figures/warehouse_hook.png){width="100%"}
 :::
 ::::
 
@@ -169,6 +169,8 @@ Lock the conventions early — return to this slide if students get confused.
 
 ## An MDP is a 5-tuple $\langle \mathcal{S}, \mathcal{A}, P, R, \gamma \rangle$
 
+:::: {.columns}
+::: {.column width="55%"}
 | Symbol         | Name                  | Type                                                                  |
 |----------------|-----------------------|-----------------------------------------------------------------------|
 | $\mathcal{S}$  | state space           | a set                                                                 |
@@ -176,8 +178,14 @@ Lock the conventions early — return to this slide if students get confused.
 | $P$            | transition kernel     | $\mathcal{S} \times \mathcal{A} \to \Delta(\mathcal{S})$              |
 | $R$            | reward function       | $\mathcal{S} \times \mathcal{A} \times \mathcal{S} \to \mathbb{R}$    |
 | $\gamma$       | discount factor       | scalar in $[0, 1]$                                                    |
+:::
 
-We will unpack each on its own slide, illustrated on the warehouse robot.
+::: {.column width="45%"}
+![](figures/agent_env_loop.png){width="100%"}
+
+\begin{center}\small Agent–environment interface\end{center}
+:::
+::::
 
 ::: notes
 One slide naming all five components. Detail per component on next 5 slides.
@@ -226,25 +234,25 @@ on state.
 
 ## $P$ — the transition kernel
 
+:::: {.columns}
+::: {.column width="55%"}
 $$
 P(s' \mid s, a) \;=\; \Pr\!\left[\,S_{t+1} = s' \,\big|\, S_t = s,\ A_t = a\,\right]
 $$
 
 A *probability distribution* over next states. Sums to $1$ over $s'$.
 
-**Warehouse step (slippery floor):**
-
-| Outcome                         | Probability |
-|---------------------------------|-------------|
-| Move in intended direction      | 0.80        |
-| Slip 90° left                   | 0.10        |
-| Slip 90° right                  | 0.10        |
-
-A wall in the chosen direction → the robot stays in place.
+**Warehouse step (slippery floor):** intended N happens 80 %; left- and right-slips happen 10 % each.
 
 ::: {.fragment .callout-warning}
-In the real world, we **do not know** $P$. That is the whole reason today's lecture exists.
+In the real world we **do not know** $P$. That is the whole reason today's lecture exists.
 :::
+:::
+
+::: {.column width="45%"}
+![](figures/stochastic_step.png){width="100%"}
+:::
+::::
 
 ::: notes
 P(s' | s, a). Show stochastic warehouse step: 80% intended direction, 10%
@@ -282,20 +290,12 @@ checkmate for material.
 
 ## $\gamma$ — the discount factor
 
-$$
-\gamma \in [0,\ 1]
-$$
+$\gamma \in [0,\ 1]$ — future rewards are *discounted* by $\gamma$ per step. Battery **now** $>$ battery in five steps; keeps infinite-horizon sums **finite**.
 
-Future rewards are *discounted* by $\gamma$ per step.
+![](figures/gamma_decay.png){width="65%" fig-align="center"}
 
-**Engineering intuitions for $\gamma < 1$:**
-
-- A charged battery **now** is worth more than the same battery five steps from now.
-- A sensor reading **now** is worth more than the same reading next loop iteration.
-- It keeps infinite-horizon sums **finite**.
-
-::: {.fragment .callout-warning title="Pre-empt"}
-A *large* $\gamma$ does **not** mean a short-term focus. Quite the opposite — $\gamma$ close to $1$ makes the agent **patient**.
+::: {.callout-warning title="Pre-empt"}
+A *large* $\gamma$ does **not** mean short-term focus — $\gamma$ close to $1$ makes the agent **patient**.
 :::
 
 ::: notes
@@ -308,15 +308,9 @@ mean short-term focus (CS234 misconception poll).
 
 A **trajectory** is the sequence the MDP generates:
 
-$$
-S_0,\ A_0,\ R_1,\ S_1,\ A_1,\ R_2,\ S_2,\ A_2,\ R_3,\ \dots
-$$
-
-. . .
+![](figures/trajectory.png){width="95%" fig-align="center"}
 
 An **episode** is a trajectory that ends in a *terminal* state.
-
-. . .
 
 **Warehouse:** an episode ends when the package is delivered, or the battery dies.
 
@@ -328,21 +322,9 @@ Note again: reward at index t+1 is the consequence of acting at time t.
 
 ## Policies: deterministic and stochastic
 
-A **policy** $\pi$ tells the agent how to act.
+**Stochastic:** $\pi(a \mid s) = \Pr[A_t = a \mid S_t = s]$ &nbsp;·&nbsp; **Deterministic:** $\pi(s) = a$
 
-**Stochastic** (the general case):
-$$
-\pi(a \mid s) \;=\; \Pr\!\left[\,A_t = a \,\big|\, S_t = s\,\right]
-$$
-
-**Deterministic:**
-$$
-\pi(s) \;=\; a
-$$
-
-::: {.fragment}
-**Warehouse examples.** Deterministic: *"always go N until on the package row, then E."* Stochastic: *"60 % N, 40 % E."*
-:::
+![](figures/policies.png){width="92%" fig-align="center"}
 
 ::: {.fragment}
 We will see soon why we sometimes *want* stochastic policies — to **explore**.
@@ -585,8 +567,10 @@ in a derivation.
 
 ## Bellman expectation equation for $v_\pi$  ★
 
+:::: {.columns}
+::: {.column width="65%"}
 $$
-\boxed{\;v_\pi(s) \;=\; \sum_a \pi(a \mid s) \sum_{s'} P(s' \mid s, a) \Bigl[\, R(s, a, s') + \gamma\, v_\pi(s') \,\Bigr]\;}
+\boxed{\;v_\pi(s) \;=\; \sum_a \pi(a \mid s) \sum_{s'} P(s' \mid s, a) \Bigl[\, R(s,a,s') + \gamma\, v_\pi(s') \,\Bigr]\;}
 $$
 
 ::: {.fragment}
@@ -596,6 +580,12 @@ $$
 ::: {.fragment}
 A **self-consistency** equation: $v_\pi$ appears on both sides.
 :::
+:::
+
+::: {.column width="35%"}
+![](figures/backup_v.png){width="100%"}
+:::
+::::
 
 ::: notes
 v_π(s) = Σ_a π(a|s) Σ_{s'} P(s'|s,a) [R(s,a,s') + γ v_π(s')].
@@ -608,18 +598,21 @@ constraint that v_π must satisfy.
 
 ## Bellman expectation equation for $q_\pi$  ★★
 
+:::: {.columns}
+::: {.column width="65%"}
 $$
-\boxed{\;q_\pi(s, a) \;=\; \sum_{s'} P(s' \mid s, a) \Bigl[\, R(s, a, s') + \gamma\, \textstyle\sum_{a'} \pi(a' \mid s')\, q_\pi(s', a') \,\Bigr]\;}
-$$
-
-The inner sum equals $v_\pi(s')$, so equivalently:
-$$
-q_\pi(s, a) \;=\; \sum_{s'} P(s' \mid s, a) \Bigl[\, R(s, a, s') + \gamma\, v_\pi(s') \,\Bigr]
+\boxed{\;q_\pi(s, a) \;=\; \sum_{s'} P(s' \mid s, a) \Bigl[\, R(s,a,s') + \gamma\, \textstyle\sum_{a'} \pi(a' \mid s')\, q_\pi(s', a') \,\Bigr]\;}
 $$
 
 ::: {.fragment .callout-important title="THIS is the equation SARSA samples"}
 The inner structure $r + \gamma\, q_\pi(s', a')$ for the next $(s', a')$ is **exactly** the $(S, A, R, S', A')$ tuple SARSA collects.
 :::
+:::
+
+::: {.column width="35%"}
+![](figures/backup_q.png){width="100%"}
+:::
+::::
 
 ::: notes
 q_π(s,a) = Σ_{s'} P(s'|s,a) [R(s,a,s') + γ Σ_{a'} π(a'|s') q_π(s',a')].
@@ -631,35 +624,31 @@ forms — all the same equation.
 
 ## Worked example: compute $q_\pi$ by hand
 
-A 3-state chain. Actions: `left`, `right`. Transitions deterministic. Step cost $-1$; entering the terminal $T$ gives reward $+10$. Discount $\gamma = 0.9$. Policy $\pi$ = "always `right`."
+3-state chain. Actions `left`, `right`. Deterministic transitions; step cost $-1$; entering terminal $T$ gives $+10$; $\gamma = 0.9$; policy $\pi$ = always `right`.
 
-<!-- FIGURE: linear chain  s_1 ⇄ s_2 → T  with arrows for `left` and `right`; rewards −1 per step, +10 on entering T -->
+![](figures/chain_worked.png){width="55%" fig-align="center"}
 
 :::: {.columns}
-::: {.column width="50%"}
-**Bellman expectation gives:**
+::: {.column width="55%"}
+**Bellman expectation chains back:**
 $$
 \begin{aligned}
 q_\pi(s_2, \mathrm{right}) &= +10 \\
 q_\pi(s_1, \mathrm{right}) &= -1 + \gamma\, q_\pi(s_2, \mathrm{right}) \\
-q_\pi(s_2, \mathrm{left})  &= -1 + \gamma\, q_\pi(s_1, \mathrm{right}) \\
-q_\pi(s_1, \mathrm{left})  &= -1 + \gamma\, q_\pi(s_1, \mathrm{right})
+q_\pi(s_2, \mathrm{left})  &= -1 + \gamma\, q_\pi(s_1, \mathrm{right})
 \end{aligned}
 $$
 :::
 
-::: {.column width="50%"}
+::: {.column width="45%"}
 ::: {.fragment}
-**Substituting back:**
-
 | $(s, a)$            | $q_\pi$ |
 |---------------------|--------:|
 | $(s_2, \mathrm{right})$ | $+10$ |
 | $(s_1, \mathrm{right})$ | $+8$  |
 | $(s_2, \mathrm{left})$  | $+6.2$ |
-| $(s_1, \mathrm{left})$  | $+6.2$ |
 
-This **only worked** because we knew $P$ and $R$.
+Only possible because we knew $P, R$.
 :::
 :::
 ::::
@@ -673,21 +662,25 @@ P and R explicitly. In real problems, we don't.
 
 ## Bellman optimality — the dream
 
+:::: {.columns}
+::: {.column width="55%"}
 The **optimal** value functions:
 $$
-v_*(s) \;=\; \max_\pi v_\pi(s), \qquad q_*(s, a) \;=\; \max_\pi q_\pi(s, a)
+v_*(s) = \max_\pi v_\pi(s),\quad q_*(s,a) = \max_\pi q_\pi(s, a)
 $$
 
-::: {.fragment}
-There is always a deterministic optimal policy $\pi_*$. Its action-value satisfies the **Bellman optimality equation:**
+There is always a deterministic optimal policy $\pi_*$:
 $$
-q_*(s, a) \;=\; \sum_{s'} P(s' \mid s, a) \Bigl[\, R(s, a, s') + \gamma\, \max_{a'} q_*(s', a') \,\Bigr]
+q_*(s, a) = \sum_{s'} P(s'|s,a) \bigl[ R + \gamma \max_{a'} q_*(s', a') \bigr]
 $$
+
+Only difference vs. expectation: $\sum_{a'} \pi(a'|s') \to \max_{a'}$. The rest of the lecture **estimates $q_\pi$ for a gradually-improving policy**.
 :::
 
-::: {.fragment}
-Only difference vs. Bellman expectation: $\sum_{a'} \pi(a'|s')$ → $\max_{a'}$. We won't dwell on $q_*$; the rest of the lecture **estimates $q_\pi$ for a gradually-improving policy**.
+::: {.column width="45%"}
+![](figures/optimal_policy.png){width="100%"}
 :::
+::::
 
 ::: notes
 Name v* and q*. State the optimality equation. The MAX vs the sum-over-π is
@@ -717,16 +710,18 @@ bootstrap. The next slide locates all three on a 2x2.
 
 ## Where TD sits — sample × bootstrap
 
-|                       | **No sampling**          | **Sampling**                       |
-|-----------------------|--------------------------|------------------------------------|
-| **No bootstrapping**  | exhaustive search        | **Monte Carlo** (full returns)     |
-| **Bootstrapping**     | **Dynamic Programming**  | **Temporal Difference**  ★         |
+:::: {.columns}
+::: {.column width="50%"}
+![](figures/unified_2x2.png){width="85%" fig-align="center"}
+:::
 
-::: {.fragment}
+::: {.column width="50%"}
 - **DP.** Computes the expectation exactly — needs $P$ and $R$.
 - **MC.** Samples whole episodes — no bootstrapping, but high variance.
-- **TD.** Samples one transition, bootstraps off the current estimate. **SARSA lives here.**
+- **TD.** Samples one transition, bootstraps off the current estimate.
+- **SARSA lives in the TD corner.**
 :::
+::::
 
 ::: notes
 CMU 2×2: rows = bootstrap?, columns = sample?
@@ -820,21 +815,12 @@ observed transition and one observed action.
 
 ## Driving home — a TD intuition pump
 
-You're driving home from work. At each landmark you keep an estimate of total time to home.
+![](figures/driving_home.png){width="95%" fig-align="center"}
 
-::: {.fragment}
-- **Office (start).** Estimate: 30 min.
-- **Landmark 2.** No new info → still ~30 min.
-- **Landmark 3.** Hit unexpected traffic. Realise you're going to be late.
-:::
-
-::: {.fragment}
-**Question.** Do you wait until you actually get home to update your **office** estimate? Or do you bump it **right now**, using your updated estimate at landmark 3?
-:::
-
-::: {.fragment .callout-important}
-Of course you bump it now. That is **bootstrapping**.
-This is the heart of TD — and you don't need an MDP to feel it.
+::: {.callout-important}
+**MC** waits for the trip to end before correcting any estimate.
+**TD** corrects each estimate the moment the *next* one moves.
+That is **bootstrapping** — and you don't need an MDP to feel it.
 :::
 
 ::: notes
@@ -991,29 +977,21 @@ asymmetry clean for students.
 
 ## $\varepsilon$-greedy
 
-A simple, near-universal exploration rule.
-
 $$
 A_t \;=\;
 \begin{cases}
-\arg\max_a Q(S_t, a) & \text{with probability } 1 - \varepsilon \\
-\text{uniform random action} & \text{with probability } \varepsilon
+\arg\max_a Q(S_t, a) & \text{with prob.\ } 1 - \varepsilon \\
+\text{uniform random} & \text{with prob.\ } \varepsilon
 \end{cases}
 $$
 
-::: {.fragment}
-**Behaviour at the extremes:**
+![](figures/epsilon_greedy_split.png){width="40%" fig-align="center"}
 
-| $\varepsilon$ | behaviour                                              |
-|---------------|--------------------------------------------------------|
-| $0$           | pure exploit — the catastrophe on the previous slide   |
-| $1$           | pure random walk — never uses what it has learned      |
-| $0.1$         | typical default: 90 % greedy, 10 % "try something new" |
-:::
-
-::: {.fragment .callout-tip}
-> *"Are you sure you've chosen the best door?"*  — David Silver, UCL Lecture 5
-:::
+| $\varepsilon$ | behaviour                                  |
+|---------------|--------------------------------------------|
+| $0$           | pure exploit — catastrophe (last slide)    |
+| $1$           | pure random walk — no learning             |
+| $0.1$         | typical default                            |
 
 ::: notes
 With probability 1−ε, take arg max_a Q(s,a). With probability ε, take a
@@ -1024,19 +1002,21 @@ You haven't tried it yet.
 
 ## $\varepsilon$ schedules
 
-**Constant $\varepsilon$** (e.g. $0.1$). Simple. Works in many problems. But the policy stays *forever* stochastic, so it can never reach the optimum.
+:::: {.columns}
+::: {.column width="50%"}
+**Constant $\varepsilon$** — simple, but the policy stays *forever* stochastic and never reaches the optimum.
 
-::: {.fragment}
-**Decaying $\varepsilon$** (e.g. $\varepsilon_t = 1/t$). Explore early; exploit late.
+**Decaying $\varepsilon$** ($\varepsilon_t = 1/t$, exponential, …) — explore early, exploit late.
+
+::: {.callout-note title="GLIE"}
+*Greedy in the Limit with Infinite Exploration:* visit every $(s, a)$ infinitely often AND become greedy in the limit. The formal condition for SARSA to converge to the optimal policy.
+:::
 :::
 
-::: {.fragment .callout-note title="GLIE"}
-*Greedy in the Limit with Infinite Exploration.* A schedule that:
-- visits every $(s, a)$ infinitely often, **and**
-- becomes greedy in the limit.
-
-This is the formal condition that lets SARSA converge to the optimal policy.
+::: {.column width="50%"}
+![](figures/epsilon_schedules.png){width="100%"}
 :::
+::::
 
 ::: notes
 Constant ε vs decaying ε. Why decay: explore early when Q is bad,
@@ -1047,21 +1027,21 @@ Exploration" — the formal condition for SARSA's policy convergence.
 
 ## SARSA backup diagram
 
-The five elements of one update step, drawn as a chain:
-
-$$
-\underbrace{S}_{\text{state}} \;\;\longrightarrow\;\; \underbrace{A}_{\text{action}} \;\;\longrightarrow\;\; \underbrace{R}_{\text{reward}} \;\;\longrightarrow\;\; \underbrace{S'}_{\text{next state}} \;\;\longrightarrow\;\; \underbrace{A'}_{\text{next action}}
-$$
-
-::: {.fragment}
-- $A$ chosen $\varepsilon$-greedily from $Q(S, \cdot)$
-- $R, S'$ observed from the environment
-- $A'$ chosen $\varepsilon$-greedily from $Q(S', \cdot)$
+:::: {.columns}
+::: {.column width="35%"}
+![](figures/backup_sarsa.png){width="80%" fig-align="center"}
 :::
 
-::: {.fragment}
+::: {.column width="65%"}
+- $A$ chosen $\varepsilon$-greedily from $Q(S, \cdot)$
+- $R$, $S'$ observed from the environment
+- $A'$ chosen $\varepsilon$-greedily from $Q(S', \cdot)$
+
+::: {.fragment .callout-important}
 The chain **is** the algorithm.
 :::
+:::
+::::
 
 ::: notes
 Vertical visual would be even better. The chain IS the algorithm.
@@ -1125,16 +1105,12 @@ Walk through line by line. Take 5–6 minutes. For each line ask the class:
 
 ## Visualising $Q$ on the gridworld
 
-Each cell is **quartered** — one triangle per action $\{N, S, E, W\}$. The number in the triangle is $Q(s, a)$. The arrow leaving the cell shows $\arg\max_a Q(s, a)$.
+Each cell is **quartered** — one triangle per action $\{N, S, E, W\}$. Number in each triangle = $Q(s, a)$.
 
-<!-- FIGURE: three snapshots of the warehouse gridworld, each cell quartered with Q-values written in. Captioned: episode 0 (Q ≡ 0), episode 50 (some structure), episode 500 (clear value flow toward depot). -->
+![](figures/q_evolution.png){width="100%" fig-align="center"}
 
 ::: {.fragment}
-**What you should see develop over training:**
-
-- Cells near the depot acquire the highest values first.
-- Value "flows backwards" from the depot through the gridworld.
-- Arrows align with the optimal-or-near-optimal direction of travel.
+Cells near the depot acquire high values first; value **flows backwards** from the depot through the gridworld.
 :::
 
 ::: notes
@@ -1209,16 +1185,12 @@ gridworld snapshots.
 
 ## Showcase — Windy Gridworld
 
-A $7 \times 10$ grid. **Wind** blows the agent upward by 1 or 2 cells in the middle columns, regardless of the chosen action. Start `S`, goal `G`. Step cost $-1$.
+$7 \times 10$ grid. Wind blows the agent upward by 1 or 2 cells in middle columns, regardless of action. Start `S`, goal `G`. Step cost $-1$.
 
-<!-- FIGURE: Windy Gridworld: 7×10 grid with start S, goal G, and wind strength 0/1/2 indicated below each column. Trajectory of trained SARSA agent overlaid. Side panel: learning curve (episodes on x-axis, time-steps on y-axis), characteristic concave-down shape. -->
+![](figures/windy_gridworld.png){width="100%" fig-align="center"}
 
 ::: {.fragment}
-**SARSA** with $\alpha = 0.5$, $\varepsilon = 0.1$, $\gamma = 1$:
-
-- Finds a working path in $\sim 100$ episodes.
-- Stable solution: $\sim 17$ steps per episode.
-- Optimal (with this wind, no $\varepsilon$): $15$ steps. The extra $2$ are the cost of exploration.
+SARSA with $\alpha = 0.5$, $\varepsilon = 0.1$ stabilises at $\sim 17$ steps; optimal is $15$ — the extra $2$ are the cost of exploration.
 :::
 
 ::: notes
@@ -1260,18 +1232,12 @@ here; the Cliff Walking slide makes the difference visceral.
 
 ## SARSA vs Q-learning — the Cliff
 
-A grid with a **cliff** along the bottom row. Stepping into the cliff: $R = -100$ and reset to start. Every other step: $R = -1$.
+Cliff on bottom row: stepping in gives $R = -100$ + reset. Every other step: $R = -1$.
 
-<!-- FIGURE: Cliff Walking grid. Bottom row marked CLIFF. Two trajectories overlaid: SARSA's path goes one row up (safe), Q-learning's path hugs the cliff edge (optimal but risky). Side panel: per-episode reward curve, Q-learning oscillates lower, SARSA higher and more stable. -->
-
-::: {.fragment}
-- **SARSA** learns the **safe** path — one row above the cliff. It *accounts for* the $\varepsilon$-greedy slip that occasionally pushes it off.
-- **Q-learning** learns the **optimal-but-risky** path — along the cliff edge. It pretends it will play greedily forever.
-:::
+![](figures/cliff_walking.png){width="100%" fig-align="center"}
 
 ::: {.fragment .callout-tip title="The punchline"}
 **SARSA** learns about the policy it's *actually following*.
-
 **Q-learning** learns about the policy it *wishes* it could follow.
 :::
 

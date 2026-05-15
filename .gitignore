@@ -1,4 +1,7 @@
 figures/screenshots/
+.venv/
+__pycache__/
+*.pyc
 .DS_Store
 *.swp
 *.swo
