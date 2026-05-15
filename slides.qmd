@@ -660,6 +660,21 @@ Punchline at the bottom: this whole exercise was possible BECAUSE we knew
 P and R explicitly. In real problems, we don't.
 :::
 
+## Bellman backups in motion
+
+![](figures/bellman_flow.gif){width="85%" fig-align="center"}
+
+Each sweep propagates the +10 terminal reward one step backwards through the chain — exactly what the Bellman expectation equation prescribes.
+
+::: notes
+Animation: 5-state chain with reward +10 entering terminal T, γ=0.9.
+Sweep through states right-to-left, applying V[i] ← R + γ V[i+1].
+After 4 sweeps the values converge to V_target = 10·γ^(distance to terminal).
+This is in-place value iteration — the simplest algorithmic embodiment of
+the Bellman expectation equation. SARSA does the same thing but stochastically,
+one sample at a time.
+:::
+
 ## Bellman optimality — the dream
 
 :::: {.columns}
@@ -815,7 +830,7 @@ observed transition and one observed action.
 
 ## Driving home — a TD intuition pump
 
-![](figures/driving_home.png){width="95%" fig-align="center"}
+![](figures/driving_home.gif){width="95%" fig-align="center"}
 
 ::: {.callout-important}
 **MC** waits for the trip to end before correcting any estimate.
@@ -1107,7 +1122,7 @@ Walk through line by line. Take 5–6 minutes. For each line ask the class:
 
 Each cell is **quartered** — one triangle per action $\{N, S, E, W\}$. Number in each triangle = $Q(s, a)$.
 
-![](figures/q_evolution.png){width="100%" fig-align="center"}
+![](figures/q_evolution.gif){width="55%" fig-align="center"}
 
 ::: {.fragment}
 Cells near the depot acquire high values first; value **flows backwards** from the depot through the gridworld.
@@ -1234,7 +1249,7 @@ here; the Cliff Walking slide makes the difference visceral.
 
 Cliff on bottom row: stepping in gives $R = -100$ + reset. Every other step: $R = -1$.
 
-![](figures/cliff_walking.png){width="100%" fig-align="center"}
+![](figures/cliff_walking.gif){width="80%" fig-align="center"}
 
 ::: {.fragment .callout-tip title="The punchline"}
 **SARSA** learns about the policy it's *actually following*.

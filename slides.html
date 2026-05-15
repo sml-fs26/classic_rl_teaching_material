@@ -1092,6 +1092,24 @@ q_\pi(s_2, \mathrm{left})  &amp;= -1 + \gamma\, q_\pi(s_1, \mathrm{right})
           display:block!important;
       }</style></aside>
 </section>
+<section id="bellman-backups-in-motion" class="slide level2">
+<h2>Bellman backups in motion</h2>
+
+<img data-src="figures/bellman_flow.gif" class="quarto-figure quarto-figure-center r-stretch" style="width:85.0%"><p>Each sweep propagates the +10 terminal reward one step backwards through the chain — exactly what the Bellman expectation equation prescribes.</p>
+<aside class="notes">
+<p>Animation: 5-state chain with reward +10 entering terminal T, γ=0.9. Sweep through states right-to-left, applying V[i] ← R + γ V[i+1]. After 4 sweeps the values converge to V_target = 10·γ^(distance to terminal). This is in-place value iteration — the simplest algorithmic embodiment of the Bellman expectation equation. SARSA does the same thing but stochastically, one sample at a time.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
 <section id="bellman-optimality-the-dream" class="slide level2">
 <h2>Bellman optimality — the dream</h2>
 <div class="columns">
@@ -1305,7 +1323,7 @@ q_\pi(s, \mathrm{N}) \;=\; -1 + \gamma \Bigl[\, 0.8\, q_\pi(s_N, \mathrm{N}) \,+
 <section id="driving-home-a-td-intuition-pump" class="slide level2">
 <h2>Driving home — a TD intuition pump</h2>
 
-<img data-src="figures/driving_home.png" class="quarto-figure quarto-figure-center r-stretch" style="width:95.0%"><div class="callout callout-important callout-titled callout-style-default">
+<img data-src="figures/driving_home.gif" class="quarto-figure quarto-figure-center r-stretch" style="width:95.0%"><div class="callout callout-important callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
 <div class="callout-icon-container">
@@ -1734,7 +1752,7 @@ Repeat (for each episode):
 <h2>Visualising <span class="math inline">\(Q\)</span> on the gridworld</h2>
 <p>Each cell is <strong>quartered</strong> — one triangle per action <span class="math inline">\(\{N, S, E, W\}\)</span>. Number in each triangle = <span class="math inline">\(Q(s, a)\)</span>.</p>
 
-<img data-src="figures/q_evolution.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><div class="fragment">
+<img data-src="figures/q_evolution.gif" class="quarto-figure quarto-figure-center r-stretch" style="width:55.0%"><div class="fragment">
 <p>Cells near the depot acquire high values first; value <strong>flows backwards</strong> from the depot through the gridworld.</p>
 </div>
 <aside class="notes">
@@ -1913,7 +1931,7 @@ Q(S, A) \;\leftarrow\; Q(S, A) + \alpha \,\Bigl[\, R + \gamma\, \mathbf{\max_{a'
 <h2>SARSA vs Q-learning — the Cliff</h2>
 <p>Cliff on bottom row: stepping in gives <span class="math inline">\(R = -100\)</span> + reset. Every other step: <span class="math inline">\(R = -1\)</span>.</p>
 
-<img data-src="figures/cliff_walking.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><div class="fragment" title="The punchline">
+<img data-src="figures/cliff_walking.gif" class="quarto-figure quarto-figure-center r-stretch" style="width:80.0%"><div class="fragment" title="The punchline">
 <div class="callout callout-tip callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
