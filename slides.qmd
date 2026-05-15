@@ -21,6 +21,8 @@ format:
 
 # Block 0 — Welcome {.section}
 
+*Why we are here today.*
+
 ## Reinforcement Learning in 3 hours
 
 By the end of today you will be able to:
@@ -58,6 +60,8 @@ Walking comparison.
 
 # Block 1 — Markov Decision Processes {.section}
 
+*Block 1 of 3 · 45 min · the formalism for sequential decisions under uncertainty.*
+
 ## Hook: a warehouse delivery robot
 
 :::: {.columns}
@@ -68,9 +72,9 @@ Walking comparison.
 - The floor is **slippery** — the intended move only happens 80 % of the time
 - Each step **costs battery**; running out ends the episode
 
-. . .
-
+::: {.fragment}
 **The question.** What is the best plan? And how could the robot *learn* one without being told the rules?
+:::
 :::
 
 ::: {.column width="45%"}
@@ -181,9 +185,7 @@ Lock the conventions early — return to this slide if students get confused.
 :::
 
 ::: {.column width="45%"}
-![](figures/agent_env_loop.png){width="100%"}
-
-\begin{center}\small Agent–environment interface\end{center}
+![](figures/agent_env_loop.png){width="100%" fig-align="center"}
 :::
 ::::
 
@@ -193,15 +195,9 @@ One slide naming all five components. Detail per component on next 5 slides.
 
 ## $\mathcal{S}$ — the state space
 
-Everything the agent needs to know to act.
+Everything the agent needs to know to act. **Warehouse robot:**
 
-**Warehouse robot, partial list:**
-
-- Position on grid: $(x, y) \in \{0,1,2,3\}^2$
-- Holding the package? $\in \{0, 1\}$
-- Battery level: $\in \{0, 1, \dots, B_{\max}\}$
-
-Total: $|\mathcal{S}| = 16 \times 2 \times (B_{\max}+1)$.
+![](figures/state_factorization.png){width="78%" fig-align="center"}
 
 ::: {.fragment}
 The state is whatever makes the **Markov property** hold for *your* problem.
@@ -215,16 +211,12 @@ No — knowing whether you've already picked up the package matters.
 
 ## $\mathcal{A}$ — the action space
 
-What the agent can choose at each step.
+What the agent can choose at each step. **Warehouse robot:**
 
-**Warehouse robot:**
-
-$$
-\mathcal{A} = \{\,\text{N},\ \text{S},\ \text{E},\ \text{W},\ \text{pick-up},\ \text{drop}\,\}
-$$
+![](figures/actions_arrows.png){width="78%" fig-align="center"}
 
 ::: {.fragment}
-Action availability can depend on the state — `pick-up` only makes sense on the package cell. We model this either by giving an action-set $\mathcal{A}(s)$ per state, or by allowing the action everywhere and giving illegal cases a large negative reward.
+Action availability can depend on the state — `pick-up` only makes sense on the package cell. Either give $\mathcal{A}(s)$ per state, or let illegal actions take a large negative reward.
 :::
 
 ::: notes
@@ -338,12 +330,14 @@ Why we sometimes want stochastic policies: exploration (foreshadowing ε-greedy)
 ## Exercise 1 — identify the MDP components
 
 ::: {.callout-note title="Pair work — 3 min"}
-A battery-powered shuttle moves along a one-way 3-stop bus route. At each stop it can `wait` (passengers may board) or `depart`. Each passenger carried gives reward $+5$; each minute waiting costs $-1$; arriving at the depot ends the episode.
+A battery-powered shuttle moves along a one-way 3-stop bus route. At each stop it can `wait` (passengers may board) or `depart`. Each passenger gives reward $+5$; each minute waiting costs $-1$; arriving at the depot ends the episode.
 
 1. Write down $\mathcal{S}$ and $\mathcal{A}$.
 2. Sketch one valid trajectory of length $4$.
 3. Write one deterministic policy.
 :::
+
+![](figures/bus_route.png){width="78%" fig-align="center"}
 
 ::: notes
 Pair exercise (3 min). Solution on the next slide — reveal on click.
@@ -384,7 +378,11 @@ is determined by the environment after the action, not chosen by the agent.
 
 # ☕ Break (10 min) {.section}
 
+*Done: Block 1 (MDP). Up next: Block 2 — value functions and the Bellman equation.*
+
 # Block 2 — Returns, value functions, Bellman {.section}
+
+*Block 2 of 3 · 50 min · what we want from a policy, and how it constrains itself.*
 
 ## The return $G_t$
 
@@ -567,12 +565,12 @@ in a derivation.
 
 ## Bellman expectation equation for $v_\pi$  ★
 
-:::: {.columns}
-::: {.column width="65%"}
 $$
-\boxed{\;{\color{#2563eb}v_\pi(s)} \;=\; \sum_{\color{#f97316}a} {\color{#f97316}\pi(a \mid s)} \sum_{s'} P(s' \mid s, a) \Bigl[\, {\color{#dc2626}R(s,a,s')} + \gamma\, {\color{#2563eb}v_\pi(s')} \,\Bigr]\;}
+{\color{#2563eb}v_\pi(s)} \;=\; \sum_{\color{#f97316}a} {\color{#f97316}\pi(a \mid s)} \sum_{s'} P(s' \mid s, a) \Bigl[\, {\color{#dc2626}R} + \gamma\, {\color{#2563eb}v_\pi(s')} \,\Bigr]
 $$
 
+:::: {.columns}
+::: {.column width="65%"}
 ::: {.fragment}
 **Reading.** Pick action under $\color{#f97316}\pi$ → observe $\color{#dc2626}r$ and next state $s'$ → value of $s$ is reward plus the discounted value at $s'$, **averaged over everything random**.
 :::
@@ -583,7 +581,7 @@ A **self-consistency** equation: $\color{#2563eb}v_\pi$ appears on both sides.
 :::
 
 ::: {.column width="35%"}
-![](figures/backup_v.png){width="100%"}
+![](figures/backup_v.png){width="85%" fig-align="center"}
 :::
 ::::
 
@@ -598,19 +596,19 @@ constraint that v_π must satisfy.
 
 ## Bellman expectation equation for $q_\pi$  ★★
 
-:::: {.columns}
-::: {.column width="65%"}
 $$
-\boxed{\;{\color{#2563eb}q_\pi(s, a)} \;=\; \sum_{s'} P(s' \mid s, a) \Bigl[\, {\color{#dc2626}R(s,a,s')} + \gamma\, \textstyle\sum_{\color{#f97316}a'} {\color{#f97316}\pi(a' \mid s')}\, {\color{#2563eb}q_\pi(s', a')} \,\Bigr]\;}
+{\color{#2563eb}q_\pi(s, a)} \;=\; \sum_{s'} P(s' \mid s, a) \Bigl[\, {\color{#dc2626}R} + \gamma\, {\textstyle\sum_{\color{#f97316}a'}} {\color{#f97316}\pi(a' \mid s')}\, {\color{#2563eb}q_\pi(s', a')} \Bigr]
 $$
 
+:::: {.columns}
+::: {.column width="65%"}
 ::: {.fragment .callout-important title="THIS is the equation SARSA samples"}
 The inner structure $\color{#dc2626}r + \gamma\, {\color{#2563eb}q_\pi(s', a')}$ for the next $(s', a')$ is **exactly** the $(S, {\color{#f97316}A}, {\color{#dc2626}R}, S', {\color{#f97316}A'})$ tuple SARSA collects.
 :::
 :::
 
 ::: {.column width="35%"}
-![](figures/backup_q.png){width="100%"}
+![](figures/backup_q.png){width="85%" fig-align="center"}
 :::
 ::::
 
@@ -811,7 +809,12 @@ some students will write the inner sum AS A SUM and miss this).
 Apply the boxed Bellman equation. With $\pi$ deterministic ($\pi(s') = \mathrm{N}$ for every landing state) the inner sum collapses to a single term, and the step cost $-1$ factors out:
 
 $$
-q_\pi(s, \mathrm{N}) \;=\; -1 + \gamma \Bigl[\, 0.8\, q_\pi(s_N, \mathrm{N}) \,+\, 0.1\, q_\pi(s_W, \mathrm{N}) \,+\, 0.1\, q_\pi(s_E, \mathrm{N}) \,\Bigr]
+\begin{aligned}
+q_\pi(s, \mathrm{N}) \;=\; -1 \,+\, \gamma\, \Bigl[ \;
+& 0.8\, q_\pi(s_N, \mathrm{N}) \\
++\; & 0.1\, q_\pi(s_W, \mathrm{N}) \\
++\; & 0.1\, q_\pi(s_E, \mathrm{N}) \;\Bigr]
+\end{aligned}
 $$
 
 ::: {.fragment .callout-warning title="Watch for"}
@@ -826,7 +829,11 @@ observed transition and one observed action.
 
 # ☕ Break (10 min) {.section}
 
-# Block 3 — ε-greedy and SARSA {.section}
+*Done: Blocks 1 & 2 (MDP, Bellman). Up next: Block 3 — SARSA itself.*
+
+# Block 3 — Exploration and SARSA {.section}
+
+*Block 3 of 3 · 50 min · turn the Bellman equation into a learning algorithm.*
 
 ## Driving home — a TD intuition pump
 
@@ -977,20 +984,9 @@ Walk through carefully. Pure greedy + zero init is a soft trap; pure greedy
 discover reward in the first place. Exploration is not optional.
 :::
 
-## Why we need exploration — the fix
+## $\varepsilon$-greedy — the fix
 
-The fix is to **occasionally pick a non-greedy action**.
-
-::: {.fragment}
-That is the role of $\varepsilon$-greedy on the next slide.
-:::
-
-::: notes
-Bridge slide. One-line setup for ε-greedy. Keeps the trap-vs-fix
-asymmetry clean for students.
-:::
-
-## $\varepsilon$-greedy
+The fix is to **occasionally pick a non-greedy action**:
 
 $$
 A_t \;=\;
@@ -1101,11 +1097,13 @@ Repeat (for each episode):
     Repeat (for each step of episode):
         Take action A; observe R, S'
         A' ← ε-greedy(Q, S')
-        Q(S, A) ← Q(S, A) + α [ R + γ Q(S', A') − Q(S, A) ]
+        Q(S, A) ← Q(S, A) + α [ R + γ Q(S', A') − Q(S, A) ]   ★
         S ← S'
         A ← A'
     until S is terminal
 ```
+
+★ ${\color{#2563eb}Q(S,A)} \leftarrow {\color{#2563eb}Q(S,A)} + \alpha\bigl[\,{\color{#dc2626}R} + \gamma\,{\color{#2563eb}Q(S', A')} - {\color{#2563eb}Q(S,A)}\bigr]$
 
 ::: {.fragment .callout-important}
 Every symbol on this slide has appeared on a previous slide. We have arrived.
@@ -1316,6 +1314,8 @@ in their head by the end of today.
 :::
 
 # Block 4 — Wrap {.section}
+
+*10 min · what we built, and where to go next.*
 
 ## From MDP to SARSA in one diagram
 

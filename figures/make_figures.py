@@ -561,6 +561,94 @@ def fig_trajectory():
     return save(fig, "trajectory")
 
 
+def fig_state_factorization():
+    from matplotlib.patches import FancyBboxPatch
+    fig, ax = plt.subplots(figsize=(8, 2.6))
+    ax.set_xlim(0, 10); ax.set_ylim(0, 3)
+    ax.set_aspect("equal"); ax.set_xticks([]); ax.set_yticks([])
+    for sp in ax.spines.values(): sp.set_visible(False)
+    boxes = [
+        (1.2, "position\n$(x, y)$", COL_STATE),
+        (4.2, "package?\n$\\{0, 1\\}$", COL_ACTION),
+        (7.2, "battery\n$\\{0,\\dots,B_{\\max}\\}$", COL_REWARD),
+    ]
+    for cx, lab, col in boxes:
+        ax.add_patch(FancyBboxPatch((cx - 1.0, 1.0), 2.0, 1.4,
+                                     boxstyle="round,pad=0.05",
+                                     facecolor="white", edgecolor=col, lw=2))
+        ax.text(cx, 1.7, lab, ha="center", va="center", color=col,
+                fontsize=12, fontweight="bold")
+    for x in (3.2, 6.2):
+        ax.text(x, 1.7, "×", ha="center", va="center",
+                color=COL_TEXT, fontsize=18, fontweight="bold")
+    ax.text(5.0, 0.3, "$|\\mathcal{S}| = 16 \\times 2 \\times (B_{\\max}+1)$",
+            ha="center", va="center", color=COL_TEXT, fontsize=13)
+    return save(fig, "state_factorization")
+
+
+def fig_actions_arrows():
+    from matplotlib.patches import Circle
+    fig, ax = plt.subplots(figsize=(8, 2.4))
+    ax.set_xlim(0, 12); ax.set_ylim(0, 2.6)
+    ax.set_aspect("equal"); ax.set_xticks([]); ax.set_yticks([])
+    for sp in ax.spines.values(): sp.set_visible(False)
+    centers_dirs = [
+        (1.2, "N", (0, 0.55)),
+        (3.2, "S", (0, -0.55)),
+        (5.2, "E", (0.55, 0)),
+        (7.2, "W", (-0.55, 0)),
+    ]
+    for cx, lab, (dx, dy) in centers_dirs:
+        ax.add_patch(Circle((cx, 1.3), 0.55, facecolor="white",
+                             edgecolor=COL_ACTION, lw=2))
+        ax.annotate("", xy=(cx + dx, 1.3 + dy), xytext=(cx, 1.3),
+                    arrowprops=dict(arrowstyle="-|>", color=COL_ACTION,
+                                    lw=2.5, mutation_scale=15))
+        ax.text(cx, 0.4, lab, ha="center", va="center", color=COL_ACTION,
+                fontsize=14, fontweight="bold")
+    # pick-up + drop as iconic boxes
+    for cx, lab, sub in [(9.2, "pick-up", "(state-only)"), (11.0, "drop", "(state-only)")]:
+        ax.add_patch(plt.Rectangle((cx - 0.7, 0.85), 1.4, 0.9,
+                                    facecolor="#fef3c7",
+                                    edgecolor=COL_ACTION, lw=2))
+        ax.text(cx, 1.3, lab, ha="center", va="center",
+                color=COL_TEXT, fontsize=11, fontweight="bold")
+        ax.text(cx, 0.4, sub, ha="center", va="center", color=COL_MUTED,
+                fontsize=9)
+    return save(fig, "actions_arrows")
+
+
+def fig_bus_route():
+    from matplotlib.patches import Circle, FancyArrowPatch
+    fig, ax = plt.subplots(figsize=(8, 2.0))
+    ax.set_xlim(0, 10); ax.set_ylim(0, 2.0)
+    ax.set_aspect("equal"); ax.set_xticks([]); ax.set_yticks([])
+    for sp in ax.spines.values(): sp.set_visible(False)
+    stops = [(1.5, "stop 0"), (4.5, "stop 1"), (7.5, "stop 2"),
+             (9.5, "depot")]
+    for x, lab in stops[:-1]:
+        ax.add_patch(Circle((x, 1.0), 0.45, facecolor="white",
+                             edgecolor=COL_STATE, lw=2))
+        ax.text(x, 1.0, lab.split()[1], ha="center", va="center",
+                color=COL_STATE, fontsize=12, fontweight="bold")
+        ax.text(x, 0.25, lab, ha="center", va="center",
+                color=COL_TEXT, fontsize=10)
+    # depot terminal
+    ax.add_patch(plt.Rectangle((9.0, 0.55), 0.9, 0.9,
+                                facecolor="#fef3c7", edgecolor=COL_TEXT, lw=2))
+    ax.text(9.45, 1.0, "T", ha="center", va="center",
+            color=COL_TEXT, fontsize=14, fontweight="bold")
+    # arrows between stops
+    for (x0, _), (x1, _) in zip(stops[:-1], stops[1:]):
+        ax.annotate("", xy=(x1 - 0.5, 1.0), xytext=(x0 + 0.5, 1.0),
+                    arrowprops=dict(arrowstyle="-|>", color=COL_ACTION,
+                                    lw=2, mutation_scale=15))
+    ax.text(3.0, 1.45, "depart", ha="center", color=COL_ACTION, fontsize=10)
+    ax.text(6.0, 1.45, "depart", ha="center", color=COL_ACTION, fontsize=10)
+    ax.text(8.5, 1.45, "depart", ha="center", color=COL_ACTION, fontsize=10)
+    return save(fig, "bus_route")
+
+
 if __name__ == "__main__":
     figs = [
         fig_warehouse_hook,
@@ -582,6 +670,9 @@ if __name__ == "__main__":
         fig_windy_gridworld,
         fig_cliff_walking,
         fig_trajectory,
+        fig_state_factorization,
+        fig_actions_arrows,
+        fig_bus_route,
     ]
     for f in figs:
         path = f()

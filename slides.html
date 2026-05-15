@@ -147,7 +147,7 @@ Carlos Cotrini
 <section>
 <section id="block-0-welcome" class="title-slide slide level1 section center">
 <h1>Block 0 — Welcome</h1>
-
+<p><em>Why we are here today.</em></p>
 </section>
 <section id="reinforcement-learning-in-3-hours" class="slide level2">
 <h2>Reinforcement Learning in 3 hours</h2>
@@ -197,7 +197,7 @@ Carlos Cotrini
 <section>
 <section id="block-1-markov-decision-processes" class="title-slide slide level1 section center">
 <h1>Block 1 — Markov Decision Processes</h1>
-
+<p><em>Block 1 of 3 · 45 min · the formalism for sequential decisions under uncertainty.</em></p>
 </section>
 <section id="hook-a-warehouse-delivery-robot" class="slide level2">
 <h2>Hook: a warehouse delivery robot</h2>
@@ -210,8 +210,9 @@ Carlos Cotrini
 <li>The floor is <strong>slippery</strong> — the intended move only happens 80 % of the time</li>
 <li>Each step <strong>costs battery</strong>; running out ends the episode</li>
 </ul>
-<p>. . .</p>
+<div class="fragment">
 <p><strong>The question.</strong> What is the best plan? And how could the robot <em>learn</em> one without being told the rules?</p>
+</div>
 </div><div class="column" style="width:45%;">
 <p><img data-src="figures/warehouse_hook.png" style="width:100.0%"></p>
 </div></div>
@@ -432,7 +433,11 @@ Carlos Cotrini
 </tbody>
 </table>
 </div><div class="column" style="width:45%;">
-<p><img data-src="figures/agent_env_loop.png" style="width:100.0%"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="figures/agent_env_loop.png" class="quarto-figure quarto-figure-center" style="width:100.0%"></p>
+</figure>
+</div>
 </div></div>
 <aside class="notes">
 <p>One slide naming all five components. Detail per component on next 5 slides.</p>
@@ -450,15 +455,9 @@ Carlos Cotrini
 </section>
 <section id="mathcals-the-state-space" class="slide level2">
 <h2><span class="math inline">\(\mathcal{S}\)</span> — the state space</h2>
-<p>Everything the agent needs to know to act.</p>
-<p><strong>Warehouse robot, partial list:</strong></p>
-<ul>
-<li>Position on grid: <span class="math inline">\((x, y) \in \{0,1,2,3\}^2\)</span></li>
-<li>Holding the package? <span class="math inline">\(\in \{0, 1\}\)</span></li>
-<li>Battery level: <span class="math inline">\(\in \{0, 1, \dots, B_{\max}\}\)</span></li>
-</ul>
-<p>Total: <span class="math inline">\(|\mathcal{S}| = 16 \times 2 \times (B_{\max}+1)\)</span>.</p>
-<div class="fragment">
+<p>Everything the agent needs to know to act. <strong>Warehouse robot:</strong></p>
+
+<img data-src="figures/state_factorization.png" class="quarto-figure quarto-figure-center r-stretch" style="width:78.0%"><div class="fragment">
 <p>The state is whatever makes the <strong>Markov property</strong> hold for <em>your</em> problem.</p>
 </div>
 <aside class="notes">
@@ -477,13 +476,10 @@ Carlos Cotrini
 </section>
 <section id="mathcala-the-action-space" class="slide level2">
 <h2><span class="math inline">\(\mathcal{A}\)</span> — the action space</h2>
-<p>What the agent can choose at each step.</p>
-<p><strong>Warehouse robot:</strong></p>
-<p><span class="math display">\[
-\mathcal{A} = \{\,\text{N},\ \text{S},\ \text{E},\ \text{W},\ \text{pick-up},\ \text{drop}\,\}
-\]</span></p>
-<div class="fragment">
-<p>Action availability can depend on the state — <code>pick-up</code> only makes sense on the package cell. We model this either by giving an action-set <span class="math inline">\(\mathcal{A}(s)\)</span> per state, or by allowing the action everywhere and giving illegal cases a large negative reward.</p>
+<p>What the agent can choose at each step. <strong>Warehouse robot:</strong></p>
+
+<img data-src="figures/actions_arrows.png" class="quarto-figure quarto-figure-center r-stretch" style="width:78.0%"><div class="fragment">
+<p>Action availability can depend on the state — <code>pick-up</code> only makes sense on the package cell. Either give <span class="math inline">\(\mathcal{A}(s)\)</span> per state, or let illegal actions take a large negative reward.</p>
 </div>
 <aside class="notes">
 <p>Warehouse: {N, S, E, W, pick-up, drop}. Note action availability can depend on state.</p>
@@ -671,7 +667,7 @@ R(s, a, s') \;=\; \text{scalar reward observed when } s \xrightarrow{a} s'
 <p><strong>Pair work — 3 min</strong></p>
 </div>
 <div class="callout-content">
-<p>A battery-powered shuttle moves along a one-way 3-stop bus route. At each stop it can <code>wait</code> (passengers may board) or <code>depart</code>. Each passenger carried gives reward <span class="math inline">\(+5\)</span>; each minute waiting costs <span class="math inline">\(-1\)</span>; arriving at the depot ends the episode.</p>
+<p>A battery-powered shuttle moves along a one-way 3-stop bus route. At each stop it can <code>wait</code> (passengers may board) or <code>depart</code>. Each passenger gives reward <span class="math inline">\(+5\)</span>; each minute waiting costs <span class="math inline">\(-1\)</span>; arriving at the depot ends the episode.</p>
 <ol type="1">
 <li>Write down <span class="math inline">\(\mathcal{S}\)</span> and <span class="math inline">\(\mathcal{A}\)</span>.</li>
 <li>Sketch one valid trajectory of length <span class="math inline">\(4\)</span>.</li>
@@ -681,7 +677,8 @@ R(s, a, s') \;=\; \text{scalar reward observed when } s \xrightarrow{a} s'
 </div>
 </div>
 </div>
-<aside class="notes">
+
+<img data-src="figures/bus_route.png" class="quarto-figure quarto-figure-center r-stretch" style="width:78.0%"><aside class="notes">
 <p>Pair exercise (3 min). Solution on the next slide — reveal on click. The “trick”: students must include passenger count and time in the state to make the dynamics Markov. Many will write S = {0, 1, 2} (just the stop). That’s the teachable moment.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -740,13 +737,13 @@ R(s, a, s') \;=\; \text{scalar reward observed when } s \xrightarrow{a} s'
 </section></section>
 <section id="break-10-min" class="title-slide slide level1 section center">
 <h1>☕ Break (10 min)</h1>
-
+<p><em>Done: Block 1 (MDP). Up next: Block 2 — value functions and the Bellman equation.</em></p>
 </section>
 
 <section>
 <section id="block-2-returns-value-functions-bellman" class="title-slide slide level1 section center">
 <h1>Block 2 — Returns, value functions, Bellman</h1>
-
+<p><em>Block 2 of 3 · 50 min · what we want from a policy, and how it constrains itself.</em></p>
 </section>
 <section id="the-return-g_t" class="slide level2">
 <h2>The return <span class="math inline">\(G_t\)</span></h2>
@@ -971,11 +968,11 @@ v_\pi(s) \;=\; \mathbb{E}_\pi[R_{t+1} \mid S_t = s] \;+\; \gamma\, \mathbb{E}_\p
 </section>
 <section id="bellman-expectation-equation-for-v_pi" class="slide level2">
 <h2>Bellman expectation equation for <span class="math inline">\(v_\pi\)</span> ★</h2>
+<p><span class="math display">\[
+{\color{#2563eb}v_\pi(s)} \;=\; \sum_{\color{#f97316}a} {\color{#f97316}\pi(a \mid s)} \sum_{s'} P(s' \mid s, a) \Bigl[\, {\color{#dc2626}R} + \gamma\, {\color{#2563eb}v_\pi(s')} \,\Bigr]
+\]</span></p>
 <div class="columns">
 <div class="column" style="width:65%;">
-<p><span class="math display">\[
-\boxed{\;{\color{#2563eb}v_\pi(s)} \;=\; \sum_{\color{#f97316}a} {\color{#f97316}\pi(a \mid s)} \sum_{s'} P(s' \mid s, a) \Bigl[\, {\color{#dc2626}R(s,a,s')} + \gamma\, {\color{#2563eb}v_\pi(s')} \,\Bigr]\;}
-\]</span></p>
 <div class="fragment">
 <p><strong>Reading.</strong> Pick action under <span class="math inline">\(\color{#f97316}\pi\)</span> → observe <span class="math inline">\(\color{#dc2626}r\)</span> and next state <span class="math inline">\(s'\)</span> → value of <span class="math inline">\(s\)</span> is reward plus the discounted value at <span class="math inline">\(s'\)</span>, <strong>averaged over everything random</strong>.</p>
 </div>
@@ -983,7 +980,11 @@ v_\pi(s) \;=\; \mathbb{E}_\pi[R_{t+1} \mid S_t = s] \;+\; \gamma\, \mathbb{E}_\p
 <p>A <strong>self-consistency</strong> equation: <span class="math inline">\(\color{#2563eb}v_\pi\)</span> appears on both sides.</p>
 </div>
 </div><div class="column" style="width:35%;">
-<p><img data-src="figures/backup_v.png" style="width:100.0%"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="figures/backup_v.png" class="quarto-figure quarto-figure-center" style="width:85.0%"></p>
+</figure>
+</div>
 </div></div>
 <aside class="notes">
 <p>v_π(s) = Σ_a π(a|s) Σ_{s’} P(s’|s,a) [R(s,a,s’) + γ v_π(s’)]. This and the next slide are the most important slides of the lecture. Take time. Annotate every term in colour: π(a|s) blue, P(s’|s,a) orange, R green, γ v_π(s’) purple. “Self-consistency” — not a definition, not an equation to plug in, but a constraint that v_π must satisfy.</p>
@@ -1001,11 +1002,11 @@ v_\pi(s) \;=\; \mathbb{E}_\pi[R_{t+1} \mid S_t = s] \;+\; \gamma\, \mathbb{E}_\p
 </section>
 <section id="bellman-expectation-equation-for-q_pi" class="slide level2">
 <h2>Bellman expectation equation for <span class="math inline">\(q_\pi\)</span> ★★</h2>
+<p><span class="math display">\[
+{\color{#2563eb}q_\pi(s, a)} \;=\; \sum_{s'} P(s' \mid s, a) \Bigl[\, {\color{#dc2626}R} + \gamma\, {\textstyle\sum_{\color{#f97316}a'}} {\color{#f97316}\pi(a' \mid s')}\, {\color{#2563eb}q_\pi(s', a')} \Bigr]
+\]</span></p>
 <div class="columns">
 <div class="column" style="width:65%;">
-<p><span class="math display">\[
-\boxed{\;{\color{#2563eb}q_\pi(s, a)} \;=\; \sum_{s'} P(s' \mid s, a) \Bigl[\, {\color{#dc2626}R(s,a,s')} + \gamma\, \textstyle\sum_{\color{#f97316}a'} {\color{#f97316}\pi(a' \mid s')}\, {\color{#2563eb}q_\pi(s', a')} \,\Bigr]\;}
-\]</span></p>
 <div class="fragment" title="THIS is the equation SARSA samples">
 <div class="callout callout-important callout-titled callout-style-default">
 <div class="callout-body">
@@ -1022,7 +1023,11 @@ v_\pi(s) \;=\; \mathbb{E}_\pi[R_{t+1} \mid S_t = s] \;+\; \gamma\, \mathbb{E}_\p
 </div>
 </div>
 </div><div class="column" style="width:35%;">
-<p><img data-src="figures/backup_q.png" style="width:100.0%"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="figures/backup_q.png" class="quarto-figure quarto-figure-center" style="width:85.0%"></p>
+</figure>
+</div>
 </div></div>
 <aside class="notes">
 <p>q_π(s,a) = Σ_{s’} P(s’|s,a) [R(s,a,s’) + γ Σ_{a’} π(a’|s’) q_π(s’,a’)]. THIS IS THE EQUATION SARSA SAMPLES. Highlight visually. Spend 4–5 minutes. The annotation under the brace shows that the inner sum equals v_π(s’), giving us a third form: q_π(s,a) = Σ P [R + γ v_π(s’)]. Three equivalent forms — all the same equation.</p>
@@ -1279,7 +1284,12 @@ q_*(s, a) = \sum_{s'} P(s'|s,a) \bigl[ R + \gamma \max_{a'} q_*(s', a') \bigr]
 <h2>Exercise 2 — solution</h2>
 <p>Apply the boxed Bellman equation. With <span class="math inline">\(\pi\)</span> deterministic (<span class="math inline">\(\pi(s') = \mathrm{N}\)</span> for every landing state) the inner sum collapses to a single term, and the step cost <span class="math inline">\(-1\)</span> factors out:</p>
 <p><span class="math display">\[
-q_\pi(s, \mathrm{N}) \;=\; -1 + \gamma \Bigl[\, 0.8\, q_\pi(s_N, \mathrm{N}) \,+\, 0.1\, q_\pi(s_W, \mathrm{N}) \,+\, 0.1\, q_\pi(s_E, \mathrm{N}) \,\Bigr]
+\begin{aligned}
+q_\pi(s, \mathrm{N}) \;=\; -1 \,+\, \gamma\, \Bigl[ \;
+&amp; 0.8\, q_\pi(s_N, \mathrm{N}) \\
++\; &amp; 0.1\, q_\pi(s_W, \mathrm{N}) \\
++\; &amp; 0.1\, q_\pi(s_E, \mathrm{N}) \;\Bigr]
+\end{aligned}
 \]</span></p>
 <div class="fragment" title="Watch for">
 <div class="callout callout-warning callout-titled callout-style-default">
@@ -1312,13 +1322,13 @@ q_\pi(s, \mathrm{N}) \;=\; -1 + \gamma \Bigl[\, 0.8\, q_\pi(s_N, \mathrm{N}) \,+
 </section></section>
 <section id="break-10-min-1" class="title-slide slide level1 section center">
 <h1>☕ Break (10 min)</h1>
-
+<p><em>Done: Blocks 1 &amp; 2 (MDP, Bellman). Up next: Block 3 — SARSA itself.</em></p>
 </section>
 
 <section>
-<section id="block-3-ε-greedy-and-sarsa" class="title-slide slide level1 section center">
-<h1>Block 3 — ε-greedy and SARSA</h1>
-
+<section id="block-3-exploration-and-sarsa" class="title-slide slide level1 section center">
+<h1>Block 3 — Exploration and SARSA</h1>
+<p><em>Block 3 of 3 · 50 min · turn the Bellman equation into a learning algorithm.</em></p>
 </section>
 <section id="driving-home-a-td-intuition-pump" class="slide level2">
 <h2>Driving home — a TD intuition pump</h2>
@@ -1514,28 +1524,9 @@ q_\pi(s,a) \;=\; \sum_{s'} P(s'|s,a) \Bigl[ R(s,a,s') + \gamma \sum_{a'} \pi(a'|
           display:block!important;
       }</style></aside>
 </section>
-<section id="why-we-need-exploration-the-fix" class="slide level2">
-<h2>Why we need exploration — the fix</h2>
-<p>The fix is to <strong>occasionally pick a non-greedy action</strong>.</p>
-<div class="fragment">
-<p>That is the role of <span class="math inline">\(\varepsilon\)</span>-greedy on the next slide.</p>
-</div>
-<aside class="notes">
-<p>Bridge slide. One-line setup for ε-greedy. Keeps the trap-vs-fix asymmetry clean for students.</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
-</section>
-<section id="varepsilon-greedy" class="slide level2">
-<h2><span class="math inline">\(\varepsilon\)</span>-greedy</h2>
+<section id="varepsilon-greedy-the-fix" class="slide level2">
+<h2><span class="math inline">\(\varepsilon\)</span>-greedy — the fix</h2>
+<p>The fix is to <strong>occasionally pick a non-greedy action</strong>:</p>
 <p><span class="math display">\[
 A_t \;=\;
 \begin{cases}
@@ -1715,10 +1706,11 @@ Repeat (for each episode):
     Repeat (for each step of episode):
         Take action A; observe R, S'
         A' ← ε-greedy(Q, S')
-        Q(S, A) ← Q(S, A) + α [ R + γ Q(S', A') − Q(S, A) ]
+        Q(S, A) ← Q(S, A) + α [ R + γ Q(S', A') − Q(S, A) ]   ★
         S ← S'
         A ← A'
     until S is terminal</code></pre>
+<p>★ <span class="math inline">\({\color{#2563eb}Q(S,A)} \leftarrow {\color{#2563eb}Q(S,A)} + \alpha\bigl[\,{\color{#dc2626}R} + \gamma\,{\color{#2563eb}Q(S', A')} - {\color{#2563eb}Q(S,A)}\bigr]\)</span></p>
 <div class="fragment">
 <div class="callout callout-important callout-titled callout-style-default">
 <div class="callout-body">
@@ -2044,7 +2036,7 @@ Q(s_2, \mathrm{right}) &amp;\leftarrow\; Q(s_2, \mathrm{right}) + \alpha\, \bigl
 <section>
 <section id="block-4-wrap" class="title-slide slide level1 section center">
 <h1>Block 4 — Wrap</h1>
-
+<p><em>10 min · what we built, and where to go next.</em></p>
 </section>
 <section id="from-mdp-to-sarsa-in-one-diagram" class="slide level2">
 <h2>From MDP to SARSA in one diagram</h2>
